@@ -7,6 +7,8 @@ import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
 import { Target, Flame, Star, Activity, ArrowRight, PlayCircle, LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { showToast } from '../components/ui/Toast';
+import analyticsService from '../services/analyticsService';
 import { StatCardSkeleton } from '../components/ui/SkeletonLoader';
 
 /**
@@ -17,21 +19,40 @@ const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = React.useState(true);
-
-  // Mock data as per requirements.
-  const mockStats = {
-    totalScore: 124,
-    streak: 5,
-    pledgesCompleted: 2,
-    rank: 'Gold',
-  };
+  const [stats, setStats] = React.useState({
+    totalScore: 0,
+    streak: 0,
+    pledgesCompleted: 0,
+    rank: 'Bronze',
+  });
 
   React.useEffect(() => {
-    // Simulate network request for analytics data to show premium skeletons
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+    const fetchAnalytics = async () => {
+      try {
+        const response = await analyticsService.getDashboardAnalytics();
+        const data = response.data;
+        
+        // Simple client-side rank logic based on character score
+        let rank = 'Bronze';
+        if (data.characterScore >= 50) rank = 'Silver';
+        if (data.characterScore >= 150) rank = 'Gold';
+        if (data.characterScore >= 500) rank = 'Platinum';
+
+        setStats({
+          totalScore: data.characterScore,
+          streak: data.currentStreak,
+          pledgesCompleted: data.pledgeCompleted,
+          rank,
+        });
+      } catch (err) {
+        console.error('Failed to fetch analytics:', err);
+        showToast.error('Could not load your latest analytics.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchAnalytics();
   }, []);
 
   return (
@@ -65,7 +86,7 @@ const Dashboard = () => {
           <>
             <StatCard 
               title="Character Score" 
-              value={mockStats.totalScore} 
+              value={stats.totalScore} 
               trend={10}
               trendLabel="vs last week"
               icon={Star} 
@@ -74,14 +95,14 @@ const Dashboard = () => {
             />
             <StatCard 
               title="Current Streak" 
-              value={`${mockStats.streak} Days`} 
+              value={`${stats.streak} Days`} 
               icon={Flame} 
               colorClass="text-orange-400"
               bgClass="bg-orange-400/10"
             />
             <StatCard 
               title="Pledges Active" 
-              value={mockStats.pledgesCompleted} 
+              value={stats.pledgesCompleted} 
               trend={0}
               trendLabel="pending review"
               icon={Target} 
@@ -90,7 +111,7 @@ const Dashboard = () => {
             />
             <StatCard 
               title="Current Rank" 
-              value={mockStats.rank} 
+              value={stats.rank} 
               icon={Activity} 
               colorClass="text-purple-400"
               bgClass="bg-purple-400/10"
@@ -112,13 +133,34 @@ const Dashboard = () => {
               </Button>
             </div>
             
-            <div className="flex-1 flex items-center justify-center">
-              <EmptyState 
-                icon={Activity}
-                title="No recent activity"
-                description="Complete your daily check-in or submit a pledge to start building your character timeline."
-                className="w-full border-none bg-transparent py-8"
-              />
+            <div className="flex-1 flex flex-col justify-center">
+              {stats.recentCheckIns && stats.recentCheckIns.length > 0 ? (
+                <div className="space-y-4">
+                  {stats.recentCheckIns.map((checkIn) => (
+                    <div key={checkIn._id} className="p-4 bg-dark-950 border border-dark-800 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="w-10 h-10 bg-emerald-900/30 text-emerald-500 rounded-full flex items-center justify-center">
+                          <Activity className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">Daily Check-In Completed</p>
+                          <p className="text-sm text-slate-400">{new Date(checkIn.date).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="text-emerald-400 font-bold">
+                        +{checkIn.score} pts
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState 
+                  icon={Activity}
+                  title="No recent activity"
+                  description="Complete your daily check-in or submit a pledge to start building your character timeline."
+                  className="w-full border-none bg-transparent py-8"
+                />
+              )}
             </div>
           </Card>
         </div>

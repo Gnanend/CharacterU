@@ -15,10 +15,12 @@ router.get('/health', (req, res) => {
 const authRoutes = require('./authRoutes');
 const pledgeRoutes = require('./pledgeRoutes');
 const checkInRoutes = require('./checkInRoutes');
+const analyticsRoutes = require('./analyticsRoutes');
 
 // Mount routes
 router.use('/auth', authRoutes);
 router.use('/pledges', pledgeRoutes);
 router.use('/checkins', checkInRoutes);
+router.use('/analytics', analyticsRoutes);
 
 module.exports = router;

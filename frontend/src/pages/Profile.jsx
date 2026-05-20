@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileStats from '../components/profile/ProfileStats';
 import AchievementCard from '../components/profile/AchievementCard';
 import { Star, Flame, CalendarCheck, Target, Heart, ShieldCheck, Handshake, ShieldAlert } from 'lucide-react';
+import { showToast } from '../components/ui/Toast';
+import analyticsService from '../services/analyticsService';
+import { StatCardSkeleton } from '../components/ui/SkeletonLoader';
 
 /**
  * Profile Page Component
@@ -12,13 +15,37 @@ import { Star, Flame, CalendarCheck, Target, Heart, ShieldCheck, Handshake, Shie
  */
 const Profile = () => {
   const { user } = useAuth();
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    characterScore: 0,
+    currentStreak: 0,
+    totalCheckIns: 0,
+    pledgeCompleted: 0
+  });
 
-  // Mock data as per requirements. Real data will be connected later via APIs.
-  const mockStats = [
-    { label: 'Character Score', value: '3,450', icon: Star, colorClass: 'text-yellow-400', bgClass: 'bg-yellow-400/10' },
-    { label: 'Current Streak', value: '12 Days', icon: Flame, colorClass: 'text-orange-400', bgClass: 'bg-orange-400/10' },
-    { label: 'Total Check-Ins', value: '45', icon: CalendarCheck, colorClass: 'text-emerald-400', bgClass: 'bg-emerald-400/10' },
-    { label: 'Pledges Active', value: '2', icon: Target, colorClass: 'text-purple-400', bgClass: 'bg-purple-400/10' },
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await analyticsService.getDashboardAnalytics();
+        setStats(response.data);
+      } catch (err) {
+        console.error('Failed to fetch profile analytics:', err);
+        showToast.error('Could not load your latest analytics.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchAnalytics();
+  }, []);
+
+  // Format the real data into the shape expected by ProfileStats component
+  const profileStatsData = [
+    { label: 'Character Score', value: stats.characterScore, icon: Star, colorClass: 'text-yellow-400', bgClass: 'bg-yellow-400/10' },
+    { label: 'Current Streak', value: `${stats.currentStreak} Days`, icon: Flame, colorClass: 'text-orange-400', bgClass: 'bg-orange-400/10' },
+    { label: 'Total Check-Ins', value: stats.totalCheckIns, icon: CalendarCheck, colorClass: 'text-emerald-400', bgClass: 'bg-emerald-400/10' },
+    { label: 'Pledges Active', value: stats.pledgeCompleted, icon: Target, colorClass: 'text-purple-400', bgClass: 'bg-purple-400/10' },
   ];
 
   const mockAchievements = [
@@ -26,29 +53,29 @@ const Profile = () => {
       title: 'First Pledge', 
       description: 'Submitted your first character pledge video.', 
       icon: Target, 
-      unlocked: true, 
-      date: 'Oct 12, 2024' 
+      unlocked: stats.pledgeCompleted > 0, 
+      date: stats.pledgeCompleted > 0 ? 'Unlocked' : null 
     },
     { 
       title: '7-Day Streak', 
       description: 'Completed a daily check-in for 7 consecutive days.', 
       icon: Flame, 
-      unlocked: true, 
-      date: 'Oct 19, 2024' 
+      unlocked: stats.currentStreak >= 7, 
+      date: stats.currentStreak >= 7 ? 'Unlocked' : null 
     },
     { 
-      title: 'Community Helper', 
-      description: 'Helped someone 10 times in your daily check-ins.', 
+      title: 'Active Member', 
+      description: 'Completed 10 total daily check-ins.', 
       icon: Handshake, 
-      unlocked: false, 
-      date: null 
+      unlocked: stats.totalCheckIns >= 10, 
+      date: stats.totalCheckIns >= 10 ? 'Unlocked' : null 
     },
     { 
-      title: 'Peace Advocate', 
-      description: 'Avoided conflict 30 times in your daily check-ins.', 
+      title: 'Character Master', 
+      description: 'Reached a Character Score of 100.', 
       icon: ShieldCheck, 
-      unlocked: false, 
-      date: null 
+      unlocked: stats.characterScore >= 100, 
+      date: stats.characterScore >= 100 ? 'Unlocked' : null 
     },
   ];
 
@@ -64,7 +91,16 @@ const Profile = () => {
           <Star className="w-5 h-5 text-yellow-400" />
           Your Impact
         </h3>
-        <ProfileStats stats={mockStats} />
+        {isLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </div>
+        ) : (
+          <ProfileStats stats={profileStatsData} />
+        )}
       </div>
 
       {/* Achievements Section */}
