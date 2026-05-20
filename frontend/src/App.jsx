@@ -7,6 +7,7 @@ import About from './pages/About';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import Pledge from './pages/Pledge';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
@@ -29,6 +30,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="pledge" 
+              element={
+                <ProtectedRoute>
+                  <Pledge />
                 </ProtectedRoute>
               } 
             />

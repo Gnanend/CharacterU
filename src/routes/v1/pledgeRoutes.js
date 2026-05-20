@@ -14,4 +14,18 @@ const { uploadVideo } = require('../../middleware/uploadMiddleware');
 // 3. Handle response in controller
 router.post('/upload-video', protect, uploadVideo.single('video'), pledgeController.uploadVideo);
 
+/**
+ * @route   POST /api/v1/pledges
+ * @desc    Create a new pledge
+ * @access  Private (Requires valid JWT token)
+ */
+router.post('/', protect, pledgeController.createPledge);
+
+/**
+ * @route   GET /api/v1/pledges/me
+ * @desc    Get current user's pledges
+ * @access  Private (Requires valid JWT token)
+ */
+router.get('/me', protect, pledgeController.getMyPledges);
+
 module.exports = router;
