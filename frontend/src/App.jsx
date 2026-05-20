@@ -5,6 +5,7 @@ import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import About from './pages/About';
 import Register from './pages/Register';
+import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="register" element={<Register />} />
+            <Route path="login" element={<Login />} />
             
             {/* Fallback for undefined routes */}
             <Route path="*" element={<NotFound />} />
