@@ -10,41 +10,40 @@ import Dashboard from './pages/Dashboard';
 import Pledge from './pages/Pledge';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import DashboardLayout from './layouts/DashboardLayout';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Main Application Layout wrapper */}
+          {/* Public Application Layout wrapper (Landing, Auth, etc.) */}
           <Route path="/" element={<MainLayout />}>
-            {/* Public Routing Endpoints */}
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="register" element={<Register />} />
             <Route path="login" element={<Login />} />
-            
-            {/* Protected Routing Endpoints */}
-            <Route 
-              path="dashboard" 
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="pledge" 
-              element={
-                <ProtectedRoute>
-                  <Pledge />
-                </ProtectedRoute>
-              } 
-            />
-            
-            {/* Fallback for undefined routes */}
-            <Route path="*" element={<NotFound />} />
           </Route>
+
+          {/* Protected SaaS Application Layout wrapper */}
+          <Route 
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            {/* These routes will render inside DashboardLayout's <Outlet /> */}
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/pledge" element={<Pledge />} />
+            <Route path="/check-in" element={<div className="p-8 text-white">Daily Check-In Placeholder</div>} />
+            <Route path="/certificates" element={<div className="p-8 text-white">Certificates Placeholder</div>} />
+            <Route path="/leaderboard" element={<div className="p-8 text-white">Leaderboard Placeholder</div>} />
+            <Route path="/profile" element={<div className="p-8 text-white">Profile Placeholder</div>} />
+          </Route>
+
+          {/* Fallback for undefined routes */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </AuthProvider>
