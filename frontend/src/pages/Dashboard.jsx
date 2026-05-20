@@ -33,7 +33,7 @@ const Dashboard = () => {
         
         {/* Primary Call to Action */}
         <Link 
-          to="/check-in" 
+          to="/daily-checkin" 
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-primary-900/20"
         >
           <Target className="w-5 h-5" />

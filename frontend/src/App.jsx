@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Pledge from './pages/Pledge';
+import DailyCheckIn from './pages/DailyCheckIn';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -36,7 +37,7 @@ function App() {
             {/* These routes will render inside DashboardLayout's <Outlet /> */}
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pledge" element={<Pledge />} />
-            <Route path="/check-in" element={<div className="p-8 text-white">Daily Check-In Placeholder</div>} />
+            <Route path="/daily-checkin" element={<DailyCheckIn />} />
             <Route path="/certificates" element={<div className="p-8 text-white">Certificates Placeholder</div>} />
             <Route path="/leaderboard" element={<div className="p-8 text-white">Leaderboard Placeholder</div>} />
             <Route path="/profile" element={<div className="p-8 text-white">Profile Placeholder</div>} />

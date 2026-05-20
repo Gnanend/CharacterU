@@ -21,7 +21,7 @@ const Sidebar = () => {
 
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Daily Check-In', path: '/check-in', icon: CalendarCheck },
+    { name: 'Daily Check-In', path: '/daily-checkin', icon: CalendarCheck },
     { name: 'Pledges', path: '/pledge', icon: HandHeart },
     { name: 'Certificates', path: '/certificates', icon: Award },
     { name: 'Leaderboard', path: '/leaderboard', icon: Trophy },
