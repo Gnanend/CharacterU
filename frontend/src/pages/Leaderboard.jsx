@@ -1,22 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Trophy, Globe, MapPin, Map, Users } from 'lucide-react';
 import TopRankCard from '../components/leaderboard/TopRankCard';
 import LeaderboardTable from '../components/leaderboard/LeaderboardTable';
-
-// Mock data as per requirements
-const mockTopUsers = [
-  { id: 1, name: 'Alex Johnson', role: 'student', score: '12,450', streak: 45 },
-  { id: 2, name: 'Sarah Miller', role: 'student', score: '11,200', streak: 30 },
-  { id: 3, name: 'David Chen', role: 'student', score: '9,800', streak: 22 },
-];
-
-const mockOtherUsers = [
-  { id: 4, name: 'Emily White', role: 'student', score: '8,400', streak: 15 },
-  { id: 5, name: 'Michael Brown', role: 'student', score: '7,900', streak: 12 },
-  { id: 6, name: 'Jessica Davis', role: 'student', score: '7,500', streak: 10 },
-  { id: 7, name: 'Daniel Wilson', role: 'student', score: '6,200', streak: 8 },
-  { id: 8, name: 'Sophia Moore', role: 'student', score: '5,800', streak: 5 },
-];
+import leaderboardService from '../services/leaderboardService';
+import { showToast } from '../components/ui/Toast';
+import { useAuth } from '../hooks/useAuth';
+import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 /**
  * Leaderboard Page Component
@@ -24,15 +13,58 @@ const mockOtherUsers = [
  * filtering options, and the general ranking table.
  */
 const Leaderboard = () => {
+  const { user } = useAuth();
   const [activeFilter, setActiveFilter] = useState('global');
+  const [isLoading, setIsLoading] = useState(true);
+  const [leaderboardData, setLeaderboardData] = useState([]);
 
-  // Interactive filters
+  // Interactive filters (UI only for now, can be wired to backend params later)
   const filters = [
     { id: 'global', label: 'Global', icon: Globe },
     { id: 'country', label: 'Country', icon: Map },
     { id: 'city', label: 'City', icon: MapPin },
     { id: 'friends', label: 'Friends', icon: Users },
   ];
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        setIsLoading(true);
+        const response = await leaderboardService.getLeaderboard();
+        setLeaderboardData(response.data || []);
+      } catch (error) {
+        console.error('Failed to fetch leaderboard:', error);
+        showToast.error('Could not load leaderboard rankings.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchLeaderboard();
+  }, [activeFilter]);
+
+  // Split data for podium (top 3) vs table (everyone else)
+  // The service already returns them sorted by rank (index + 1)
+  const topUsers = leaderboardData.slice(0, 3).map(u => ({
+    id: u.userId,
+    name: u.fullName,
+    role: u.userId === user?._id ? 'You' : 'Member',
+    score: u.characterScore.toLocaleString(),
+    streak: u.currentStreak,
+    isCurrentUser: u.userId === user?._id,
+    avatar: u.avatar
+  }));
+  
+  const otherUsers = leaderboardData.slice(3).map((u, i) => ({
+    id: u.userId,
+    name: u.fullName,
+    role: u.userId === user?._id ? 'You' : 'Member',
+    score: u.characterScore.toLocaleString(),
+    streak: u.currentStreak,
+    isCurrentUser: u.userId === user?._id,
+    avatar: u.avatar,
+    actualRank: i + 4
+  }));
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-10 pb-12 animate-in fade-in duration-500">
@@ -70,32 +102,48 @@ const Leaderboard = () => {
         })}
       </div>
 
-      {/* Top 3 Podium View */}
-      {/* 
-        Responsive layout trick: 
-        On mobile, they stack vertically (1, 2, 3).
-        On desktop, they align horizontally with Rank 1 in the middle. 
-      */}
-      <div className="flex flex-col md:flex-row items-center md:items-end justify-center gap-6 md:gap-0 mt-8 mb-16 px-4">
-        <div className="w-full max-w-[280px] md:w-1/3 order-2 md:order-1">
-          <TopRankCard rank={2} user={mockTopUsers[1]} />
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+          <LoadingSpinner size="lg" />
+          <p className="text-slate-400">Loading live rankings...</p>
         </div>
-        <div className="w-full max-w-[280px] md:w-1/3 order-1 md:order-2 md:z-10">
-          <TopRankCard rank={1} user={mockTopUsers[0]} />
+      ) : leaderboardData.length === 0 ? (
+        <div className="text-center py-20">
+          <p className="text-slate-400">No rankings available yet.</p>
         </div>
-        <div className="w-full max-w-[280px] md:w-1/3 order-3 md:order-3">
-          <TopRankCard rank={3} user={mockTopUsers[2]} />
-        </div>
-      </div>
+      ) : (
+        <>
+          {/* Top 3 Podium View */}
+          <div className="flex flex-col md:flex-row items-center md:items-end justify-center gap-6 md:gap-0 mt-8 mb-16 px-4">
+            {topUsers.length > 1 && (
+              <div className="w-full max-w-[280px] md:w-1/3 order-2 md:order-1">
+                <TopRankCard rank={2} user={topUsers[1]} />
+              </div>
+            )}
+            {topUsers.length > 0 && (
+              <div className="w-full max-w-[280px] md:w-1/3 order-1 md:order-2 md:z-10">
+                <TopRankCard rank={1} user={topUsers[0]} />
+              </div>
+            )}
+            {topUsers.length > 2 && (
+              <div className="w-full max-w-[280px] md:w-1/3 order-3 md:order-3">
+                <TopRankCard rank={3} user={topUsers[2]} />
+              </div>
+            )}
+          </div>
 
-      {/* Remaining Leaderboard Table View */}
-      <div className="pt-4 max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-4 px-2">
-          <h3 className="text-xl font-bold text-white">Current Standings</h3>
-          <span className="text-sm font-medium text-slate-500 uppercase tracking-wider">Top 100</span>
-        </div>
-        <LeaderboardTable users={mockOtherUsers} />
-      </div>
+          {/* Remaining Leaderboard Table View */}
+          {otherUsers.length > 0 && (
+            <div className="pt-4 max-w-4xl mx-auto">
+              <div className="flex items-center justify-between mb-4 px-2">
+                <h3 className="text-xl font-bold text-white">Current Standings</h3>
+                <span className="text-sm font-medium text-slate-500 uppercase tracking-wider">Top 100</span>
+              </div>
+              <LeaderboardTable users={otherUsers} />
+            </div>
+          )}
+        </>
+      )}
 
     </div>
   );

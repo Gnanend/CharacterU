@@ -16,11 +16,13 @@ const authRoutes = require('./authRoutes');
 const pledgeRoutes = require('./pledgeRoutes');
 const checkInRoutes = require('./checkInRoutes');
 const analyticsRoutes = require('./analyticsRoutes');
+const leaderboardRoutes = require('./leaderboardRoutes');
 
 // Mount routes
 router.use('/auth', authRoutes);
 router.use('/pledges', pledgeRoutes);
 router.use('/checkins', checkInRoutes);
 router.use('/analytics', analyticsRoutes);
+router.use('/leaderboard', leaderboardRoutes);
 
 module.exports = router;
