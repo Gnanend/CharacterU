@@ -47,3 +47,16 @@ exports.login = asyncHandler(async (req, res) => {
     user
   });
 });
+
+/**
+ * @desc    Get current logged in user profile
+ * @route   GET /api/v1/auth/me
+ * @access  Private
+ */
+exports.getMe = asyncHandler(async (req, res) => {
+  // req.user is attached by the protect middleware and excludes the password
+  res.status(200).json({
+    success: true,
+    user: req.user
+  });
+});
