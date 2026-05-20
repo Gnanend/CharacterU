@@ -1,17 +1,22 @@
 import React from 'react';
 import { useAuth } from '../hooks/useAuth';
-import StatsCard from '../components/dashboard/StatsCard';
-import { Target, Flame, Star, Activity, ArrowRight, PlayCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import StatCard from '../components/ui/StatCard';
+import PageHeader from '../components/ui/PageHeader';
+import Card from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import EmptyState from '../components/ui/EmptyState';
+import { Target, Flame, Star, Activity, ArrowRight, PlayCircle, LayoutDashboard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Main Dashboard Page
- * Represents the highly-visual, modern SaaS landing view for authenticated users.
+ * Refactored to utilize the centralized UI design system.
  */
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
-  // Mock data as per requirements. Real data will be connected later.
+  // Mock data as per requirements.
   const mockStats = {
     totalScore: 124,
     streak: 5,
@@ -22,55 +27,51 @@ const Dashboard = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
-      {/* Welcome Section */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Dashboard</h1>
-          <p className="text-slate-400 mt-1">
-            Welcome back, <span className="text-white font-medium">{user?.fullName}</span>. Here's your character progress.
-          </p>
-        </div>
-        
-        {/* Primary Call to Action */}
-        <Link 
-          to="/daily-checkin" 
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-primary-900/20"
-        >
-          <Target className="w-5 h-5" />
-          <span>Daily Check-In</span>
-        </Link>
-      </div>
+      {/* Centralized Page Header */}
+      <PageHeader 
+        title="Dashboard"
+        subtitle={`Welcome back, ${user?.fullName}. Here's your character progress.`}
+        icon={LayoutDashboard}
+        action={
+          <Button 
+            onClick={() => navigate('/daily-checkin')}
+            icon={Target}
+          >
+            Daily Check-In
+          </Button>
+        }
+      />
 
-      {/* Responsive Stats Grid */}
+      {/* Responsive Stats Grid using centralized StatCard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard 
+        <StatCard 
           title="Character Score" 
           value={mockStats.totalScore} 
-          subtitle="+12 this week"
+          trend={10}
+          trendLabel="vs last week"
           icon={Star} 
           colorClass="text-yellow-400"
           bgClass="bg-yellow-400/10"
         />
-        <StatsCard 
+        <StatCard 
           title="Current Streak" 
           value={`${mockStats.streak} Days`} 
-          subtitle="You're on fire! 🔥"
           icon={Flame} 
           colorClass="text-orange-400"
           bgClass="bg-orange-400/10"
         />
-        <StatsCard 
+        <StatCard 
           title="Pledges Active" 
           value={mockStats.pledgesCompleted} 
-          subtitle="1 pending review"
+          trend={0}
+          trendLabel="pending review"
           icon={Target} 
           colorClass="text-emerald-400"
           bgClass="bg-emerald-400/10"
         />
-        <StatsCard 
+        <StatCard 
           title="Current Rank" 
           value={mockStats.rank} 
-          subtitle="Top 15% of students"
           icon={Activity} 
           colorClass="text-purple-400"
           bgClass="bg-purple-400/10"
@@ -80,34 +81,30 @@ const Dashboard = () => {
       {/* Main Content Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Recent Activity Panel (Left - Takes up 2 columns on lg screens) */}
+        {/* Recent Activity Panel using centralized Card & EmptyState */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-dark-900 border border-dark-800 rounded-2xl p-6 shadow-sm h-full">
+          <Card className="h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white tracking-tight">Recent Activity</h3>
-              <button className="text-sm font-medium text-primary-400 hover:text-primary-300 transition-colors inline-flex items-center gap-1">
-                View All <ArrowRight className="w-4 h-4" />
-              </button>
+              <Button variant="outline" size="sm" icon={ArrowRight}>
+                View All
+              </Button>
             </div>
             
-            {/* Placeholder Empty State using modern dashed borders */}
-            <div className="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-dark-800 rounded-xl bg-dark-950/50">
-              <div className="w-16 h-16 bg-dark-800 rounded-full flex items-center justify-center mb-4 shadow-inner">
-                <Activity className="w-8 h-8 text-slate-500" />
-              </div>
-              <p className="text-white font-medium mb-1">No recent activity</p>
-              <p className="text-sm text-slate-400 max-w-sm mx-auto">
-                Complete your daily check-in or submit a pledge to start building your character timeline.
-              </p>
+            <div className="flex-1 flex items-center justify-center">
+              <EmptyState 
+                icon={Activity}
+                title="No recent activity"
+                description="Complete your daily check-in or submit a pledge to start building your character timeline."
+                className="w-full border-none bg-transparent py-8"
+              />
             </div>
-          </div>
+          </Card>
         </div>
 
-        {/* Quick Actions & Promos (Right - Takes up 1 column on lg screens) */}
+        {/* Quick Actions using localized glassmorphism override on Card */}
         <div className="space-y-6">
-          
-          {/* Glassmorphism/Gradient Callout Card */}
-          <div className="bg-gradient-to-br from-primary-900/40 to-dark-900 border border-primary-500/20 rounded-2xl p-6 shadow-lg relative overflow-hidden group">
+          <Card glass className="relative group overflow-hidden bg-gradient-to-br from-primary-900/40 to-dark-900 border-primary-500/20">
             {/* Decorative background glow effect */}
             <div className="absolute -right-10 -top-10 w-40 h-40 bg-primary-500/10 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-colors duration-700"></div>
             
@@ -119,15 +116,15 @@ const Dashboard = () => {
               <p className="text-sm text-slate-300 mb-6 leading-relaxed">
                 Record a short video committing to your next character growth goal to earn bonus points and unlock new ranks.
               </p>
-              <Link 
-                to="/pledge" 
-                className="inline-flex w-full items-center justify-center gap-2 px-4 py-2.5 bg-white text-primary-900 hover:bg-slate-100 rounded-xl font-bold transition-all shadow-md"
+              <Button 
+                variant="premium"
+                onClick={() => navigate('/pledge')}
+                className="w-full"
               >
                 Start Recording
-              </Link>
+              </Button>
             </div>
-          </div>
-
+          </Card>
         </div>
 
       </div>

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Loader2, Upload, AlertCircle, CheckCircle2, Video, X } from 'lucide-react';
 import pledgeService from '../../services/pledgeService';
+import Button from '../ui/Button';
 
 /**
  * PledgeForm component handles the text input and the complex two-step process
@@ -111,12 +112,13 @@ const PledgeForm = () => {
         </div>
         <h2 className="text-2xl font-bold text-white">Pledge Submitted Successfully!</h2>
         <p className="text-slate-400">Thank you for making your commitment. Your pledge is now pending review.</p>
-        <button 
+        <Button 
+          variant="secondary"
           onClick={() => setStatus('idle')}
-          className="mt-6 px-6 py-2.5 bg-dark-800 hover:bg-dark-700 text-white rounded-xl transition-colors border border-dark-700 font-medium"
+          className="mt-6"
         >
           Submit Another Pledge
-        </button>
+        </Button>
       </div>
     );
   }
@@ -238,22 +240,15 @@ const PledgeForm = () => {
           )}
 
           {/* Submit Button */}
-          <button
+          <Button
             type="submit"
-            disabled={isLoading}
-            className="w-full py-3.5 px-4 bg-primary-600 hover:bg-primary-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-primary-900/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
+            variant="premium"
+            size="lg"
+            isLoading={isLoading}
+            className="w-full mt-4"
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>
-                  {status === 'uploading' ? 'Uploading Media...' : 'Submitting Pledge...'}
-                </span>
-              </>
-            ) : (
-              <span>Submit Pledge</span>
-            )}
-          </button>
+            {status === 'uploading' ? 'Uploading Media...' : 'Submitting Pledge...'}
+          </Button>
         </form>
       </div>
     </div>
