@@ -36,3 +36,25 @@ exports.validateRegister = (req, res, next) => {
 
   next();
 };
+
+/**
+ * Middleware to validate the login request payload.
+ */
+exports.validateLogin = (req, res, next) => {
+  const { email, password } = req.body;
+  const errors = [];
+
+  if (!email || typeof email !== 'string' || email.trim() === '') {
+    errors.push('Email is required');
+  }
+
+  if (!password || typeof password !== 'string' || password.trim() === '') {
+    errors.push('Password is required');
+  }
+
+  if (errors.length > 0) {
+    return next(new ApiError(400, errors.join('. ')));
+  }
+
+  next();
+};

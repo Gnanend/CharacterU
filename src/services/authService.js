@@ -45,3 +45,37 @@ exports.registerUser = async (userData) => {
 
   return { token, user: sanitizedUser };
 };
+
+/**
+ * Logs in a user.
+ * 
+ * @param {string} email - The user's email.
+ * @param {string} password - The user's plain text password.
+ * @returns {Object} An object containing the generated token and the sanitized user document.
+ */
+exports.loginUser = async (email, password) => {
+  // 1. Find the user by email and explicitly select the password field
+  const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+  
+  if (!user) {
+    // Return generic invalid credentials message for security
+    throw new ApiError(401, 'Invalid credentials');
+  }
+
+  // 2. Check if password matches
+  const isMatch = await user.comparePassword(password);
+  
+  if (!isMatch) {
+    // Return generic invalid credentials message for security
+    throw new ApiError(401, 'Invalid credentials');
+  }
+
+  // 3. Generate JWT token
+  const token = generateToken(user._id);
+
+  // 4. Return sanitized user response
+  const sanitizedUser = user.toObject();
+  delete sanitizedUser.password;
+
+  return { token, user: sanitizedUser };
+};

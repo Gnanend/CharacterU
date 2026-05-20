@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authController = require('../../controllers/authController');
-const { validateRegister } = require('../../validators/authValidator');
+const { validateRegister, validateLogin } = require('../../validators/authValidator');
 
 /**
  * @route   POST /api/v1/auth/register
@@ -10,6 +10,11 @@ const { validateRegister } = require('../../validators/authValidator');
  */
 router.post('/register', validateRegister, authController.register);
 
-// Note: Login API is not built yet as per requirements
+/**
+ * @route   POST /api/v1/auth/login
+ * @desc    Login a user
+ * @access  Public
+ */
+router.post('/login', validateLogin, authController.login);
 
 module.exports = router;
