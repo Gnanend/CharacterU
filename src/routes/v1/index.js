@@ -13,9 +13,10 @@ router.get('/health', (req, res) => {
 });
 
 const authRoutes = require('./authRoutes');
+const pledgeRoutes = require('./pledgeRoutes');
 
-// Future routes will be mounted here
+// Mount routes
 router.use('/auth', authRoutes);
-// router.use('/users', userRoutes);
+router.use('/pledges', pledgeRoutes);
 
 module.exports = router;
