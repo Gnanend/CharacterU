@@ -9,6 +9,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Pledge from './pages/Pledge';
 import DailyCheckIn from './pages/DailyCheckIn';
+import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -40,7 +41,7 @@ function App() {
             <Route path="/daily-checkin" element={<DailyCheckIn />} />
             <Route path="/certificates" element={<div className="p-8 text-white">Certificates Placeholder</div>} />
             <Route path="/leaderboard" element={<div className="p-8 text-white">Leaderboard Placeholder</div>} />
-            <Route path="/profile" element={<div className="p-8 text-white">Profile Placeholder</div>} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           {/* Fallback for undefined routes */}
