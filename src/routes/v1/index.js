@@ -12,7 +12,10 @@ router.get('/health', (req, res) => {
   });
 });
 
+const authRoutes = require('./authRoutes');
+
 // Future routes will be mounted here
+router.use('/auth', authRoutes);
 // router.use('/users', userRoutes);
 
 module.exports = router;
