@@ -34,6 +34,10 @@ exports.createPledge = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Pledge text is required');
   }
 
+  if (!videoUrl) {
+    throw new ApiError(400, 'A video pledge is mandatory. Please upload a video URL.');
+  }
+
   const pledge = await Pledge.create({
     user: req.user.id,
     pledgeText,

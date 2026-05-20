@@ -78,14 +78,6 @@ const RegisterForm = () => {
           <p className="text-slate-400 text-sm">Join CharacterU and start creating</p>
         </div>
 
-        {/* Global API Error Banner */}
-        {authError && (
-          <div className="p-4 bg-red-900/20 border border-red-900/50 rounded-xl flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-            <p className="text-sm text-red-200">{authError}</p>
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           
           {/* Full Name Field */}

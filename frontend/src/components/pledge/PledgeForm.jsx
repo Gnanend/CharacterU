@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Loader2, Upload, AlertCircle, CheckCircle2, Video, X } from 'lucide-react';
 import pledgeService from '../../services/pledgeService';
 import Button from '../ui/Button';
+import { showToast } from '../ui/Toast';
 
 /**
  * PledgeForm component handles the text input and the complex two-step process
@@ -14,16 +15,18 @@ const PledgeForm = () => {
   });
   const [videoFile, setVideoFile] = useState(null);
   
-  // Status machine: idle | uploading | submitting | success | error
-  const [status, setStatus] = useState('idle'); 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | uploading | submitting | success
   const [uploadProgress, setUploadProgress] = useState(0);
   
   const fileInputRef = useRef(null);
 
   const validateForm = () => {
     if (formData.pledgeText.trim().length < 10) {
-      setErrorMessage('Pledge text must be at least 10 characters long.');
+      showToast.error('Pledge text must be at least 10 characters long.');
+      return false;
+    }
+    if (!videoFile) {
+      showToast.error('A video pledge is mandatory. Please upload a video before submitting.');
       return false;
     }
     return true;
@@ -34,25 +37,22 @@ const PledgeForm = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    setErrorMessage(''); // Clear errors when user types
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Basic frontend validation to match backend rules
       if (!file.type.startsWith('video/')) {
-        setErrorMessage('Please select a valid video file.');
+        showToast.error('Please select a valid video file.');
         setVideoFile(null);
         return;
       }
       if (file.size > 50 * 1024 * 1024) {
-        setErrorMessage('Video must be less than 50MB.');
+        showToast.error('Video must be less than 50MB.');
         setVideoFile(null);
         return;
       }
       setVideoFile(file);
-      setErrorMessage('');
     }
   };
 
@@ -65,9 +65,10 @@ const PledgeForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
     
     if (!validateForm()) return;
+    
+    let loadingToastId;
     
     try {
       let finalVideoUrl = null;
@@ -75,31 +76,37 @@ const PledgeForm = () => {
       // Step 1: Upload Video to Cloudinary via backend if one is selected
       if (videoFile) {
         setStatus('uploading');
+        loadingToastId = showToast.loading('Uploading video to secure storage...');
         const uploadRes = await pledgeService.uploadVideo(videoFile, (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           setUploadProgress(percentCompleted);
         });
         
         finalVideoUrl = uploadRes.videoUrl;
+        showToast.dismiss(loadingToastId);
       }
 
       // Step 2: Submit Pledge data + optional Cloudinary URL
       setStatus('submitting');
+      loadingToastId = showToast.loading('Submitting your pledge...');
       await pledgeService.submitPledge({
         ...formData,
         videoUrl: finalVideoUrl
       });
       
+      showToast.dismiss(loadingToastId);
+      showToast.success('Pledge successfully recorded!');
       setStatus('success');
       // Reset form states
       setFormData({ pledgeText: '', language: 'en' });
       setVideoFile(null);
       
     } catch (err) {
-      setStatus('error');
+      setStatus('idle');
+      if (loadingToastId) showToast.dismiss(loadingToastId);
       // Display the structured error message returned from the backend or the generic error message
       const apiErrorMessage = err.response?.data?.message || err.message || 'An error occurred while submitting your pledge.';
-      setErrorMessage(apiErrorMessage);
+      showToast.error(apiErrorMessage);
     }
   };
 
@@ -133,14 +140,6 @@ const PledgeForm = () => {
           <h2 className="text-2xl font-bold text-white tracking-tight">Make a Pledge</h2>
           <p className="text-slate-400 text-sm">Commit to your character growth journey. Add an optional video to strengthen your pledge.</p>
         </div>
-
-        {/* Global Error Banner */}
-        {errorMessage && (
-          <div className="p-4 bg-red-900/20 border border-red-900/50 rounded-xl flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-            <p className="text-sm text-red-200">{errorMessage}</p>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           
@@ -178,7 +177,7 @@ const PledgeForm = () => {
 
           {/* Video Upload Field */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Video Evidence (Optional)</label>
+            <label className="text-sm font-medium text-slate-300">Video Evidence <span className="text-red-400">*</span></label>
             
             {!videoFile ? (
               <div 
@@ -247,7 +246,7 @@ const PledgeForm = () => {
             isLoading={isLoading}
             className="w-full mt-4"
           >
-            {status === 'uploading' ? 'Uploading Media...' : 'Submitting Pledge...'}
+            {status === 'uploading' ? 'Uploading Media...' : status === 'submitting' ? 'Submitting Pledge...' : 'Submit Pledge'}
           </Button>
         </form>
       </div>

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import authService from '../services/authService';
+import { showToast } from '../components/ui/Toast';
 
 // Create the context
 export const AuthContext = createContext(null);
@@ -33,13 +34,10 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, [token]);
 
-  /**
-   * Handle user login
-   * @param {Object} credentials - email and password
-   */
   const login = async (credentials) => {
     setLoading(true);
     setError(null);
+    const loadingToastId = showToast.loading('Signing in...');
     try {
       const response = await authService.login(credentials);
       
@@ -48,22 +46,24 @@ export const AuthProvider = ({ children }) => {
       setToken(response.token);
       setUser(response.user);
       
+      showToast.dismiss(loadingToastId);
+      showToast.success('Logged in successfully!');
       return response;
     } catch (err) {
-      setError(err.message || 'Login failed');
+      const errorMsg = err.message || 'Login failed';
+      setError(errorMsg);
+      showToast.dismiss(loadingToastId);
+      showToast.error(errorMsg);
       throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * Handle user registration
-   * @param {Object} userData - fullName, email, password, role
-   */
   const register = async (userData) => {
     setLoading(true);
     setError(null);
+    const loadingToastId = showToast.loading('Creating account...');
     try {
       const response = await authService.register(userData);
       
@@ -72,18 +72,20 @@ export const AuthProvider = ({ children }) => {
       setToken(response.token);
       setUser(response.user);
       
+      showToast.dismiss(loadingToastId);
+      showToast.success('Account created successfully!');
       return response;
     } catch (err) {
-      setError(err.message || 'Registration failed');
+      const errorMsg = err.message || 'Registration failed';
+      setError(errorMsg);
+      showToast.dismiss(loadingToastId);
+      showToast.error(errorMsg);
       throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * Handle user logout
-   */
   const logout = useCallback(() => {
     // 1. Completely remove JWT token and any potential user data from localStorage
     localStorage.removeItem('token');
@@ -93,6 +95,8 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUser(null);
     setError(null);
+
+    showToast.success('Logged out successfully');
 
     // 3. Force redirect to login page (ensures clean slate if Router Navigate doesn't catch it quickly enough)
     if (window.location.pathname !== '/login') {

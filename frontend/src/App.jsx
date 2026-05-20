@@ -15,10 +15,12 @@ import Certificates from './pages/Certificates';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-right" reverseOrder={false} />
       <Router>
         <Routes>
           {/* Public Application Layout wrapper (Landing, Auth, etc.) */}

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Sidebar from '../components/dashboard/Sidebar';
 import Topbar from '../components/dashboard/Topbar';
+import Breadcrumbs from '../components/navigation/Breadcrumbs';
+import PageTransition from '../components/ui/PageTransition';
 
 /**
  * DashboardLayout Component
@@ -11,6 +14,7 @@ import Topbar from '../components/dashboard/Topbar';
 const DashboardLayout = () => {
   // State to manage mobile sidebar visibility
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const location = useLocation();
 
   return (
     // Outer container takes full viewport height and prevents scrolling
@@ -40,9 +44,18 @@ const DashboardLayout = () => {
         <Topbar onOpenSidebar={() => setIsSidebarOpen(true)} />
         
         {/* Scrollable Page Content Container */}
-        {/* Using Outlet to dynamically render the nested route components */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 scroll-smooth">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto p-6 md:p-8 lg:p-10 scroll-smooth flex flex-col">
+          {/* Breadcrumbs Navigation */}
+          <div className="mb-6 hidden sm:block">
+            <Breadcrumbs />
+          </div>
+          
+          {/* Animated Route Transitions */}
+          <AnimatePresence mode="wait">
+            <PageTransition key={location.pathname} className="flex-1 flex flex-col">
+              <Outlet />
+            </PageTransition>
+          </AnimatePresence>
         </main>
       </div>
     </div>

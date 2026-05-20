@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
 import { Target, Flame, Star, Activity, ArrowRight, PlayCircle, LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { StatCardSkeleton } from '../components/ui/SkeletonLoader';
 
 /**
  * Main Dashboard Page
@@ -15,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 const Dashboard = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = React.useState(true);
 
   // Mock data as per requirements.
   const mockStats = {
@@ -24,8 +26,16 @@ const Dashboard = () => {
     rank: 'Gold',
   };
 
+  React.useEffect(() => {
+    // Simulate network request for analytics data to show premium skeletons
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="space-y-8">
       
       {/* Centralized Page Header */}
       <PageHeader 
@@ -44,38 +54,49 @@ const Dashboard = () => {
 
       {/* Responsive Stats Grid using centralized StatCard */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Character Score" 
-          value={mockStats.totalScore} 
-          trend={10}
-          trendLabel="vs last week"
-          icon={Star} 
-          colorClass="text-yellow-400"
-          bgClass="bg-yellow-400/10"
-        />
-        <StatCard 
-          title="Current Streak" 
-          value={`${mockStats.streak} Days`} 
-          icon={Flame} 
-          colorClass="text-orange-400"
-          bgClass="bg-orange-400/10"
-        />
-        <StatCard 
-          title="Pledges Active" 
-          value={mockStats.pledgesCompleted} 
-          trend={0}
-          trendLabel="pending review"
-          icon={Target} 
-          colorClass="text-emerald-400"
-          bgClass="bg-emerald-400/10"
-        />
-        <StatCard 
-          title="Current Rank" 
-          value={mockStats.rank} 
-          icon={Activity} 
-          colorClass="text-purple-400"
-          bgClass="bg-purple-400/10"
-        />
+        {isLoading ? (
+          <>
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+            <StatCardSkeleton />
+          </>
+        ) : (
+          <>
+            <StatCard 
+              title="Character Score" 
+              value={mockStats.totalScore} 
+              trend={10}
+              trendLabel="vs last week"
+              icon={Star} 
+              colorClass="text-yellow-400"
+              bgClass="bg-yellow-400/10"
+            />
+            <StatCard 
+              title="Current Streak" 
+              value={`${mockStats.streak} Days`} 
+              icon={Flame} 
+              colorClass="text-orange-400"
+              bgClass="bg-orange-400/10"
+            />
+            <StatCard 
+              title="Pledges Active" 
+              value={mockStats.pledgesCompleted} 
+              trend={0}
+              trendLabel="pending review"
+              icon={Target} 
+              colorClass="text-emerald-400"
+              bgClass="bg-emerald-400/10"
+            />
+            <StatCard 
+              title="Current Rank" 
+              value={mockStats.rank} 
+              icon={Activity} 
+              colorClass="text-purple-400"
+              bgClass="bg-purple-400/10"
+            />
+          </>
+        )}
       </div>
 
       {/* Main Content Layout Grid */}

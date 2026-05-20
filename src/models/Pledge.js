@@ -21,6 +21,7 @@ const pledgeSchema = new mongoose.Schema(
     },
     videoUrl: {
       type: String,
+      required: [true, 'A video pledge is mandatory. Please upload a video.'],
       trim: true,
       // Basic URL validation pattern
       match: [/^https?:\/\/.+/, 'Please provide a valid URL for the video']

@@ -2,10 +2,12 @@ import React, { useState, useMemo } from 'react';
 import { 
   HeartHandshake, ShieldAlert, Dumbbell, Brain, 
   Home, TreePine, MessageSquareOff, Coins, 
-  Users, Scale, ThumbsUp, Recycle, Loader2, CheckCircle2, AlertCircle
+  Users, Scale, ThumbsUp, Recycle, CheckCircle2
 } from 'lucide-react';
 import ActivityCard from './ActivityCard';
 import checkInService from '../../services/checkInService';
+import { showToast } from '../ui/Toast';
+import Button from '../ui/Button';
 
 // Pre-defined list of character activities matching backend schema fields
 const activitiesList = [
@@ -45,8 +47,7 @@ const CheckInForm = () => {
   });
   
   const [notes, setNotes] = useState('');
-  const [status, setStatus] = useState('idle'); // idle, submitting, success, error
-  const [errorMessage, setErrorMessage] = useState('');
+  const [status, setStatus] = useState('idle'); // idle, submitting, success
 
   // Calculate live score reactively based on true values in the activities object
   const currentScore = useMemo(() => {
@@ -62,19 +63,23 @@ const CheckInForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
     setStatus('submitting');
+    
+    // We can use a toast promise or a loading toast here
+    const loadingToastId = showToast.loading('Saving your check-in...');
     
     try {
       await checkInService.submitCheckIn({
         activities,
         notes
       });
+      showToast.dismiss(loadingToastId);
+      showToast.success('Daily check-in completed!');
       setStatus('success');
     } catch (err) {
-      setStatus('error');
-      // Surface backend duplication errors cleanly (e.g. "You have already submitted your daily check-in for today.")
-      setErrorMessage(err.response?.data?.message || err.message || 'Failed to submit check-in');
+      setStatus('idle');
+      showToast.dismiss(loadingToastId);
+      showToast.error(err.response?.data?.message || err.message || 'Failed to submit check-in');
     }
   };
 
@@ -111,14 +116,6 @@ const CheckInForm = () => {
         </div>
       </div>
 
-      {/* Global Error Banner */}
-      {errorMessage && (
-        <div className="p-4 bg-red-900/20 border border-red-900/50 rounded-xl flex items-start gap-3 animate-in fade-in">
-          <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-          <p className="text-sm text-red-200">{errorMessage}</p>
-        </div>
-      )}
-
       {/* Form Area */}
       <form onSubmit={handleSubmit} className="space-y-8">
         
@@ -152,20 +149,15 @@ const CheckInForm = () => {
 
         {/* Action Button */}
         <div className="flex justify-end">
-          <button
+          <Button
             type="submit"
-            disabled={status === 'submitting'}
-            className="w-full md:w-auto px-10 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-lg transition-all shadow-lg shadow-emerald-900/20 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            variant="success"
+            size="lg"
+            isLoading={status === 'submitting'}
+            className="w-full md:w-auto px-10"
           >
-            {status === 'submitting' ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>Saving Check-In...</span>
-              </>
-            ) : (
-              <span>Submit Daily Check-In</span>
-            )}
-          </button>
+            Submit Daily Check-In
+          </Button>
         </div>
       </form>
     </div>
