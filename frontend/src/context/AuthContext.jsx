@@ -85,10 +85,19 @@ export const AuthProvider = ({ children }) => {
    * Handle user logout
    */
   const logout = useCallback(() => {
+    // 1. Completely remove JWT token and any potential user data from localStorage
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // 2. Clear authentication state in AuthContext
     setToken(null);
     setUser(null);
     setError(null);
+
+    // 3. Force redirect to login page (ensures clean slate if Router Navigate doesn't catch it quickly enough)
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
   }, []);
 
   // Context value to be exposed globally

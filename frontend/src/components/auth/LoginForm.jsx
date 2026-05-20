@@ -58,8 +58,8 @@ const LoginForm = () => {
     try {
       // Call context login method which handles the API request and global state update
       await login(formData);
-      // Redirect to the home page upon successful login
-      navigate('/');
+      // Redirect to the dashboard upon successful login
+      navigate('/dashboard');
     } catch (err) {
       // Errors are surfaced gracefully by the context to `authError` state (e.g. Invalid credentials)
       console.error('Login failed:', err);

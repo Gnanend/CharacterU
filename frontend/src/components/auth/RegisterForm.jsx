@@ -62,8 +62,8 @@ const RegisterForm = () => {
     try {
       // Call context register method which handles the API request and global state update
       await register(formData);
-      // Redirect to the home page upon successful registration
-      navigate('/');
+      // Redirect to the dashboard upon successful registration
+      navigate('/dashboard');
     } catch (err) {
       // Errors are surfaced gracefully by the context to `authError` state
       console.error('Registration failed:', err);

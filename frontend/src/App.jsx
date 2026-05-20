@@ -6,7 +6,9 @@ import Home from './pages/Home';
 import About from './pages/About';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
@@ -15,11 +17,21 @@ function App() {
         <Routes>
           {/* Main Application Layout wrapper */}
           <Route path="/" element={<MainLayout />}>
-            {/* Main Routing Endpoints */}
+            {/* Public Routing Endpoints */}
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="register" element={<Register />} />
             <Route path="login" element={<Login />} />
+            
+            {/* Protected Routing Endpoints */}
+            <Route 
+              path="dashboard" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Fallback for undefined routes */}
             <Route path="*" element={<NotFound />} />
