@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Pledge from './pages/Pledge';
 import DailyCheckIn from './pages/DailyCheckIn';
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
 import Leaderboard from './pages/Leaderboard';
 import Certificates from './pages/Certificates';
 import NotFound from './pages/NotFound';
@@ -46,6 +47,7 @@ function App() {
             <Route path="/certificates" element={<Certificates />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
           </Route>
 
           {/* Fallback for undefined routes */}

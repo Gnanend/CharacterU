@@ -104,6 +104,10 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const updateUser = useCallback((updatedUser) => {
+    setUser(updatedUser);
+  }, []);
+
   // Context value to be exposed globally
   const value = {
     user,
@@ -114,6 +118,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

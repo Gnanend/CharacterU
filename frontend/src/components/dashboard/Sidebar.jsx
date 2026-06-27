@@ -9,7 +9,8 @@ import {
   Trophy, 
   User, 
   LogOut,
-  Sparkles
+  Sparkles,
+  Settings
 } from 'lucide-react';
 
 /**
@@ -26,6 +27,7 @@ const Sidebar = () => {
     { name: 'Certificates', path: '/certificates', icon: Award },
     { name: 'Leaderboard', path: '/leaderboard', icon: Trophy },
     { name: 'Profile', path: '/profile', icon: User },
+    { name: 'Edit Profile', path: '/edit-profile', icon: Settings },
   ];
 
   return (
