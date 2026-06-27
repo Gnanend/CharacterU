@@ -67,7 +67,7 @@ const Home = () => {
             {/* Call to Actions */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
-                to="/get-started"
+                to="/dashboard"
                 className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300 group"
               >
                 Start Creator <UserPlus className="w-5 h-5" />

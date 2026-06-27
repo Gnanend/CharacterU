@@ -72,7 +72,7 @@ const Navbar = () => {
           {/* CTA / Action Button */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
-              to="/get-started"
+              to="/dashboard"
               className="relative group overflow-hidden px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:shadow-lg hover:shadow-primary-500/35 transition-all duration-300"
             >
               <span className="relative z-10 flex items-center gap-2">
@@ -120,7 +120,7 @@ const Navbar = () => {
           ))}
           <div className="pt-4 border-t border-dark-800">
             <Link
-              to="/get-started"
+              to="/dashboard"
               onClick={() => setIsOpen(false)}
               className="flex items-center justify-center w-full px-4 py-3 rounded-xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-500 transition-colors shadow-lg shadow-primary-500/20"
             >
