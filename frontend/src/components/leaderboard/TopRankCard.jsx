@@ -1,5 +1,5 @@
-import React from 'react';
-import { Flame, Star } from 'lucide-react';
+
+import { Star } from 'lucide-react';
 
 /**
  * TopRankCard Component
@@ -9,8 +9,6 @@ import { Flame, Star } from 'lucide-react';
 const TopRankCard = ({ rank, user }) => {
   const isGold = rank === 1;
   const isSilver = rank === 2;
-  const isBronze = rank === 3;
-
   // Dynamic styling mapping based on leaderboard tier
   const colors = {
     bg: isGold ? 'from-yellow-500/20 to-yellow-900/10' : isSilver ? 'from-slate-300/20 to-slate-600/10' : 'from-orange-600/20 to-orange-900/10',
@@ -34,22 +32,26 @@ const TopRankCard = ({ rank, user }) => {
       {/* Hero Avatar */}
       <div className={`w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-dark-950 border-4 ${colors.border} flex items-center justify-center text-4xl font-black ${colors.text} shadow-inner mb-5 relative overflow-hidden`}>
         {/* Subtle inner glow */}
-        <div className={`absolute inset-0 bg-gradient-to-t ${colors.bg} opacity-50`}></div>
-        <span className="relative z-10">{user.name.charAt(0)}</span>
+        <div className={`absolute inset-0 bg-gradient-to-t ${colors.bg} opacity-50 z-0`}></div>
+        {user.avatar ? (
+          <img src={user.avatar} className="relative z-10 w-full h-full object-cover" alt={user.name} />
+        ) : (
+          <span className="relative z-10">{user.name.charAt(0)}</span>
+        )}
       </div>
 
-      <h3 className="text-xl font-black text-white mb-1 truncate w-full text-center tracking-tight">{user.name}</h3>
-      <p className={`text-xs font-bold uppercase tracking-wider mb-5 ${colors.text}`}>{user.role}</p>
+      <h3 className="text-xl font-black text-white mb-1 truncate w-full text-center tracking-tight flex items-center justify-center gap-2">
+        {user.name}
+      </h3>
+      <p className={`text-xs font-bold uppercase tracking-wider mb-5 ${colors.text}`}>
+        {user.city && user.country ? `${user.city}, ${user.country}` : user.country || user.city || user.role}
+      </p>
 
       {/* Core Statistics Pill */}
       <div className="flex gap-3 w-full justify-center">
-        <div className="flex items-center gap-1.5 bg-dark-950/60 px-3 py-1.5 rounded-xl border border-dark-800 shadow-inner">
-          <Star className={`w-4 h-4 ${colors.icon}`} />
-          <span className="text-white font-black text-sm">{user.score}</span>
-        </div>
-        <div className="flex items-center gap-1.5 bg-dark-950/60 px-3 py-1.5 rounded-xl border border-dark-800 shadow-inner">
-          <Flame className="w-4 h-4 text-red-500" />
-          <span className="text-white font-bold text-sm">{user.streak}</span>
+        <div className="flex items-center gap-1.5 bg-dark-950/60 px-4 py-2 rounded-xl border border-dark-800 shadow-inner">
+          <Star className={`w-5 h-5 ${colors.icon}`} />
+          <span className="text-white font-black text-base">{user.score}</span>
         </div>
       </div>
 

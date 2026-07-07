@@ -1,0 +1,14 @@
+{
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+  "leaderboard": "Leaderboard",
+  "pledge": "Pledge",
+  "logout": "Logout",
+  "loading": "Loading...",
+  "save": "Save",
+  "cancel": "Cancel",
+  "success": "Success",
+  "error": "Error",
+  "welcome": "en Welcome",
+  "title": "en profile"
+}

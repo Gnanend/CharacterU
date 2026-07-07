@@ -1,4 +1,3 @@
-import React from 'react';
 
 /**
  * Reusable Container component to constrain content width

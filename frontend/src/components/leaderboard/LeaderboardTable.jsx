@@ -1,4 +1,5 @@
-import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import LeaderboardCard from './LeaderboardCard';
 
 /**
@@ -6,11 +7,11 @@ import LeaderboardCard from './LeaderboardCard';
  * Renders the vertical list of users ranked 4th and below.
  */
 const LeaderboardTable = ({ users }) => {
+  const { t } = useTranslation('common');
+
   if (!users || users.length === 0) {
     return (
-      <div className="py-12 text-center text-slate-500 bg-dark-900 border border-dark-800 rounded-2xl">
-        No additional rankings available.
-      </div>
+      <div className="py-12 text-center text-slate-500 bg-dark-900 border border-dark-800 rounded-2xl">{t('noAdditionalRankin', 'No additional rankings available.')}</div>
     );
   }
 

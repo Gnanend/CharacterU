@@ -1,7 +1,10 @@
-import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import React from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import authService from '../services/authService';
 import profileService from '../services/profileService';
 import { showToast } from '../components/ui/Toast';
+import i18n from '../i18n/i18n';
 
 // Create the context
 export const AuthContext = createContext(null);
@@ -10,6 +13,8 @@ export const AuthContext = createContext(null);
  * AuthProvider component that wraps the application to provide global auth state.
  */
 export const AuthProvider = ({ children }) => {
+  const { t } = useTranslation('common');
+
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || null);
   const [loading, setLoading] = useState(true);
@@ -25,12 +30,13 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setError(null);
 
-    showToast.success('Logged out successfully');
+    showToast.success(t('loggedOutSuccessfu', 'Logged out successfully'));
 
     // 3. Force redirect to login page (ensures clean slate if Router Navigate doesn't catch it quickly enough)
     if (window.location.pathname !== '/login') {
       window.location.href = '/login';
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Initialize the auth state on mount
@@ -42,6 +48,9 @@ export const AuthProvider = ({ children }) => {
           const response = await profileService.getProfile();
           if (response.success && response.user) {
             setUser(response.user);
+            if (response.user.language) {
+              i18n.changeLanguage(response.user.language);
+            }
           } else {
             // Fallback for older authService if needed, but profileService is preferred
             setUser(response.user || response);
@@ -69,9 +78,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', response.token);
       setToken(response.token);
       setUser(response.user);
+      if (response.user?.language) {
+        i18n.changeLanguage(response.user.language);
+      }
       
       showToast.dismiss(loadingToastId);
-      showToast.success('Logged in successfully!');
+      showToast.success(t('loggedInSuccessful', 'Logged in successfully!'));
       return response;
     } catch (err) {
       const errorMsg = err.message || 'Login failed';
@@ -82,6 +94,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const register = useCallback(async (userData) => {
@@ -95,9 +108,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', response.token);
       setToken(response.token);
       setUser(response.user);
+      if (response.user?.language) {
+        i18n.changeLanguage(response.user.language);
+      }
       
       showToast.dismiss(loadingToastId);
-      showToast.success('Account created successfully!');
+      showToast.success(t('accountCreatedSucc', 'Account created successfully!'));
       return response;
     } catch (err) {
       const errorMsg = err.message || 'Registration failed';
@@ -108,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

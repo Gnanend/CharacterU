@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import { Menu, X, Sparkles, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import Container from './Container';
+import LanguageSwitcher from './ui/LanguageSwitcher';
 
 /**
  * Navbar component featuring premium glassmorphism styles,
  * interactive states, and a fully functional mobile menu.
  */
 const Navbar = () => {
+  const { t } = useTranslation('common');
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -25,8 +28,8 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
+    { name: t('home', 'Home'), path: '/' },
+    { name: t('about', 'About'), path: '/about' },
   ];
 
   const activeStyle = "text-primary-400 bg-primary-500/10 border-primary-500";
@@ -47,8 +50,7 @@ const Navbar = () => {
             <div className="p-2 bg-gradient-to-tr from-primary-600 to-primary-400 rounded-xl shadow-lg shadow-primary-500/20 group-hover:scale-105 transition-transform duration-300">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent group-hover:text-glow duration-300">
-              Character<span className="text-primary-400 font-extrabold">U</span>
+            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent group-hover:text-glow duration-300">{t('character', 'Character')}<span className="text-primary-400 font-extrabold">U</span>
             </span>
           </Link>
 
@@ -71,12 +73,13 @@ const Navbar = () => {
 
           {/* CTA / Action Button */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <Link
               to="/dashboard"
               className="relative group overflow-hidden px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:shadow-lg hover:shadow-primary-500/35 transition-all duration-300"
             >
               <span className="relative z-10 flex items-center gap-2">
-                Launch App <User className="w-4 h-4" />
+                {t('launchApp', 'Launch App')} <User className="w-4 h-4" />
               </span>
               <span className="absolute inset-0 bg-gradient-to-r from-primary-500 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
             </Link>
@@ -124,7 +127,7 @@ const Navbar = () => {
               onClick={() => setIsOpen(false)}
               className="flex items-center justify-center w-full px-4 py-3 rounded-xl text-base font-semibold text-white bg-primary-600 hover:bg-primary-500 transition-colors shadow-lg shadow-primary-500/20"
             >
-              Launch App
+              {t('launchApp', 'Launch App')}
             </Link>
           </div>
         </div>

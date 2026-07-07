@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useState, useMemo } from 'react';
 import { 
   HeartHandshake, ShieldAlert, Dumbbell, Brain, 
   Home, TreePine, MessageSquareOff, Coins, 
@@ -10,26 +11,30 @@ import { showToast } from '../ui/Toast';
 import Button from '../ui/Button';
 
 // Pre-defined list of character activities matching backend schema fields
-const activitiesList = [
-  { id: 'helpedSomeone', title: 'Helped Someone', icon: HeartHandshake },
-  { id: 'avoidedConflict', title: 'Avoided Conflict', icon: ShieldAlert },
-  { id: 'exercised', title: 'Exercised', icon: Dumbbell },
-  { id: 'learnedSomething', title: 'Learned Something', icon: Brain },
-  { id: 'caredForFamily', title: 'Cared For Family', icon: Home },
-  { id: 'plantedTree', title: 'Planted Tree', icon: TreePine },
-  { id: 'avoidedHate', title: 'Avoided Hate', icon: MessageSquareOff },
-  { id: 'donated', title: 'Donated', icon: Coins },
-  { id: 'volunteered', title: 'Volunteered', icon: Users },
-  { id: 'practicedHonesty', title: 'Practiced Honesty', icon: Scale },
-  { id: 'respectedOthers', title: 'Respected Others', icon: ThumbsUp },
-  { id: 'avoidedWaste', title: 'Avoided Waste', icon: Recycle },
-];
+
 
 /**
  * CheckInForm Component handles the state management of the interactive 
  * gamified daily check-in board, calculates the live score, and submits to the backend.
  */
 const CheckInForm = () => {
+  const { t } = useTranslation('common');
+
+  const activitiesList = [
+    { id: 'helpedSomeone', title: t('helpedSomeone', 'Helped Someone'), icon: HeartHandshake },
+    { id: 'avoidedConflict', title: t('avoidedConflict', 'Avoided Conflict'), icon: ShieldAlert },
+    { id: 'exercised', title: t('exercised', 'Exercised'), icon: Dumbbell },
+    { id: 'learnedSomething', title: t('learnedSomething', 'Learned Something'), icon: Brain },
+    { id: 'caredForFamily', title: t('caredForFamily', 'Cared For Family'), icon: Home },
+    { id: 'plantedTree', title: t('plantedTree', 'Planted Tree'), icon: TreePine },
+    { id: 'avoidedHate', title: t('avoidedHate', 'Avoided Hate'), icon: MessageSquareOff },
+    { id: 'donated', title: t('donated', 'Donated'), icon: Coins },
+    { id: 'volunteered', title: t('volunteered', 'Volunteered'), icon: Users },
+    { id: 'practicedHonesty', title: t('practicedHonesty', 'Practiced Honesty'), icon: Scale },
+    { id: 'respectedOthers', title: t('respectedOthers', 'Respected Others'), icon: ThumbsUp },
+    { id: 'avoidedWaste', title: t('avoidedWaste', 'Avoided Waste'), icon: Recycle },
+  ];
+
   // Map all activities natively to false
   const [activities, setActivities] = useState({
     helpedSomeone: false,
@@ -66,7 +71,7 @@ const CheckInForm = () => {
     setStatus('submitting');
     
     // We can use a toast promise or a loading toast here
-    const loadingToastId = showToast.loading('Saving your check-in...');
+    const loadingToastId = showToast.loading(t('savingYourCheckIn', 'Saving your check-in...'));
     
     try {
       await checkInService.submitCheckIn({
@@ -74,7 +79,7 @@ const CheckInForm = () => {
         notes
       });
       showToast.dismiss(loadingToastId);
-      showToast.success('Daily check-in completed!');
+      showToast.success(t('dailyCheckInCompl', 'Daily check-in completed!'));
       setStatus('success');
     } catch (err) {
       setStatus('idle');
@@ -90,9 +95,8 @@ const CheckInForm = () => {
         <div className="w-20 h-20 bg-emerald-900/30 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6 border border-emerald-500/20 shadow-inner">
           <CheckCircle2 className="w-10 h-10" />
         </div>
-        <h2 className="text-3xl font-bold text-white tracking-tight">Check-In Complete!</h2>
-        <p className="text-slate-400 max-w-md mx-auto text-lg leading-relaxed">
-          Excellent work today. You earned <span className="text-emerald-400 font-bold">{currentScore}</span> points for your character profile. Come back tomorrow!
+        <h2 className="text-3xl font-bold text-white tracking-tight">{t('checkInComplete', 'Check-In Complete!')}</h2>
+        <p className="text-slate-400 max-w-md mx-auto text-lg leading-relaxed">{t('excellentWorkToday', 'Excellent work today. You earned')}<span className="text-emerald-400 font-bold">{currentScore}</span> {t('pointsForYourCharacterProfileComeBackTomorrow', 'points for your character profile. Come back tomorrow!')}
         </p>
       </div>
     );
@@ -105,13 +109,13 @@ const CheckInForm = () => {
       {/* Header and Live Score Card */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-dark-900 to-dark-950 p-6 rounded-2xl border border-dark-800 shadow-sm">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Daily Reflection</h2>
-          <p className="text-slate-400 text-sm mt-1">Select the positive actions you completed today.</p>
+          <h2 className="text-2xl font-bold text-white tracking-tight">{t('dailyReflection', 'Daily Reflection')}</h2>
+          <p className="text-slate-400 text-sm mt-1">{t('selectThePositive', 'Select the positive actions you completed today.')}</p>
         </div>
         
         {/* Real-time score counter */}
         <div className="bg-dark-950 px-6 py-3 rounded-xl border border-dark-700 flex items-center gap-4 shadow-inner">
-          <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">Today's Score</span>
+          <span className="text-slate-400 text-xs font-bold uppercase tracking-widest">{t('todaySScore', "Today's Score")}</span>
           <span className="text-4xl font-black text-emerald-400 leading-none">{currentScore}</span>
         </div>
       </div>
@@ -134,14 +138,14 @@ const CheckInForm = () => {
 
         {/* Optional Notes Section */}
         <div className="space-y-3 bg-dark-900 p-6 md:p-8 rounded-2xl border border-dark-800 shadow-sm">
-          <label className="text-sm font-bold text-slate-300">Journal Notes (Optional)</label>
+          <label className="text-sm font-bold text-slate-300">{t('journalNotesOptional', 'Journal Notes (Optional)')}</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={4}
             maxLength={1000}
             className="w-full px-4 py-3 bg-dark-950 border border-dark-800 focus:ring-emerald-500 focus:border-emerald-500 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 transition-all resize-none shadow-inner"
-            placeholder="Reflect on your day, challenges, or moments of gratitude..."
+            placeholder={t('reflectOnYourDay', 'Reflect on your day, challenges, or moments of gratitude...')}
             disabled={status === 'submitting'}
           />
           <p className="text-xs text-slate-500 text-right">{notes.length}/1000</p>
@@ -155,9 +159,7 @@ const CheckInForm = () => {
             size="lg"
             isLoading={status === 'submitting'}
             className="w-full md:w-auto px-10"
-          >
-            Submit Daily Check-In
-          </Button>
+          >{t('submitDailyCheckI', 'Submit Daily Check-In')}</Button>
         </div>
       </form>
     </div>

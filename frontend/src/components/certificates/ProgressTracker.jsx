@@ -1,17 +1,19 @@
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * ProgressTracker Component
  * Visualizes completion percentage using a sleek animated progress bar.
  */
 const ProgressTracker = ({ progress, colorClass = "bg-primary-500" }) => {
+  const { t } = useTranslation('common');
+
   // Ensure progress remains between 0 and 100
   const clampedProgress = Math.max(0, Math.min(100, progress));
 
   return (
     <div className="space-y-2.5 w-full">
       <div className="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-slate-400">
-        <span>Progress</span>
+        <span>{t('progress', 'Progress')}</span>
         <span className={progress === 100 ? 'text-emerald-400' : 'text-slate-300'}>{clampedProgress}%</span>
       </div>
       

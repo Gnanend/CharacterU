@@ -1,4 +1,4 @@
-import React from 'react';
+
 import PledgeForm from '../components/pledge/PledgeForm';
 import Container from '../components/Container';
 

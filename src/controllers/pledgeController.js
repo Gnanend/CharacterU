@@ -46,6 +46,10 @@ exports.createPledge = asyncHandler(async (req, res) => {
     status: 'submitted', // Setting status to submitted since they are submitting it now
   });
 
+  // Automatically update the user's characterScore for completing a pledge (10 points)
+  const User = require('../models/User');
+  await User.findByIdAndUpdate(req.user.id, { $inc: { characterScore: 10 } });
+
   res.status(201).json({
     success: true,
     pledge,

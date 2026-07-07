@@ -43,6 +43,12 @@ exports.createCheckIn = async (userId, activities, notes) => {
     score,
   });
 
+  // Automatically update the user's characterScore
+  if (score > 0) {
+    const User = require('../models/User');
+    await User.findByIdAndUpdate(userId, { $inc: { characterScore: score } });
+  }
+
   return checkIn;
 };
 

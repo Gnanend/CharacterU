@@ -32,6 +32,11 @@ axiosInstance.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    // Pass through canceled requests without modifying them
+    if (axios.isCancel(error)) {
+      return Promise.reject(error);
+    }
+
     let customError = {
       message: 'An unexpected error occurred. Please try again later.',
       status: error.response?.status,

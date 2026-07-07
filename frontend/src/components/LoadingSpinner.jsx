@@ -1,9 +1,11 @@
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * LoadingSpinner component displaying a high-quality, modern, animated loader.
  */
 const LoadingSpinner = ({ size = 'md', className = '' }) => {
+  const { t } = useTranslation('common');
+
   const sizeClasses = {
     sm: 'w-6 h-6 border-2',
     md: 'w-12 h-12 border-4',
@@ -23,9 +25,7 @@ const LoadingSpinner = ({ size = 'md', className = '' }) => {
           aria-label="loading"
         ></div>
       </div>
-      <p className="mt-4 text-sm font-medium text-slate-400 animate-pulse tracking-wide">
-        Loading...
-      </p>
+      <p className="mt-4 text-sm font-medium text-slate-400 animate-pulse tracking-wide">{t('loading', 'Loading...')}</p>
     </div>
   );
 };

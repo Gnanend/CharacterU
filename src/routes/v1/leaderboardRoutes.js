@@ -1,11 +1,14 @@
 const express = require('express');
-const { getLeaderboard } = require('../../controllers/leaderboardController');
+const { getGlobalLeaderboard, getCountryLeaderboard, getCityLeaderboard } = require('../../controllers/leaderboardController');
 const { protect } = require('../../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.use(protect);
+// Global endpoint is public
+router.get('/global', getGlobalLeaderboard);
 
-router.route('/').get(getLeaderboard);
+// Country and City require authentication
+router.get('/country', protect, getCountryLeaderboard);
+router.get('/city', protect, getCityLeaderboard);
 
 module.exports = router;

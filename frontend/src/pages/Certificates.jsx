@@ -1,4 +1,5 @@
-import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { ShieldCheck } from 'lucide-react';
 import CertificateCard from '../components/certificates/CertificateCard';
 
@@ -7,6 +8,8 @@ import CertificateCard from '../components/certificates/CertificateCard';
  * Renders the gamified certification tier system.
  */
 const Certificates = () => {
+  const { t } = useTranslation('common');
+
   // Hardcoded mock progression data as per requirements.
   const mockCertificates = [
     {
@@ -67,10 +70,8 @@ const Certificates = () => {
         <div className="w-20 h-20 bg-gradient-to-br from-primary-900 to-dark-800 text-primary-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-primary-500/20 shadow-xl shadow-primary-900/10">
           <ShieldCheck className="w-10 h-10" />
         </div>
-        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">Certificates</h1>
-        <p className="text-slate-400 max-w-lg mx-auto leading-relaxed">
-          Unlock prestigious certificates as you build your character. These verified credentials demonstrate your commitment to personal growth and community impact.
-        </p>
+        <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight">{t('certificates', 'Certificates')}</h1>
+        <p className="text-slate-400 max-w-lg mx-auto leading-relaxed">{t('unlockPrestigiousC', 'Unlock prestigious certificates as you build your character. These verified credentials demonstrate your commitment to personal growth and community impact.')}</p>
       </div>
 
       {/* Grid rendering the certification tiers */}

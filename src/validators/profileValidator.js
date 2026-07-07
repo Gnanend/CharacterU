@@ -6,6 +6,7 @@ const ApiError = require('../utils/ApiError');
 exports.validateProfileUpdate = (req, res, next) => {
   const { fullName, city, country, language, avatar } = req.body;
   const errors = [];
+  const hasXSS = (str) => typeof str === 'string' && /<[^>]*>/g.test(str);
 
   // Check for unexpected fields
   const allowedFields = ['fullName', 'city', 'country', 'language', 'avatar'];
@@ -16,23 +17,25 @@ exports.validateProfileUpdate = (req, res, next) => {
     errors.push(`Unexpected fields not allowed: ${unexpectedFields.join(', ')}`);
   }
 
-  // fullName: required, trimmed, min 2, max 100
+  // fullName: optional (for partial updates), trimmed, min 2, max 100
   if (fullName !== undefined) {
     if (typeof fullName !== 'string') {
       errors.push('Full name must be a string');
+    } else if (hasXSS(fullName)) {
+      errors.push('Full name contains invalid characters');
     } else if (fullName.trim().length < 2) {
       errors.push('Full name must be at least 2 characters long');
     } else if (fullName.trim().length > 100) {
       errors.push('Full name cannot exceed 100 characters');
     }
-  } else {
-    errors.push('Full name is required');
   }
 
   // city: optional, trimmed, max 100
   if (city !== undefined && city !== null) {
     if (typeof city !== 'string') {
       errors.push('City must be a string');
+    } else if (hasXSS(city)) {
+      errors.push('City contains invalid characters');
     } else if (city.trim() === '') {
       errors.push('City cannot be an empty string');
     } else if (city.trim().length > 100) {
@@ -44,6 +47,8 @@ exports.validateProfileUpdate = (req, res, next) => {
   if (country !== undefined && country !== null) {
     if (typeof country !== 'string') {
       errors.push('Country must be a string');
+    } else if (hasXSS(country)) {
+      errors.push('Country contains invalid characters');
     } else if (country.trim() === '') {
       errors.push('Country cannot be an empty string');
     } else if (country.trim().length > 100) {
@@ -57,8 +62,8 @@ exports.validateProfileUpdate = (req, res, next) => {
       errors.push('Language must be a string');
     } else if (language.trim() === '') {
       errors.push('Language cannot be an empty string');
-    } else if (language.trim().length > 10) {
-      errors.push('Language cannot exceed 10 characters');
+    } else if (!/^[a-zA-Z\-]{2,10}$/.test(language.trim())) {
+      errors.push('Language must be a valid language code');
     }
   }
 

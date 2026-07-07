@@ -1,4 +1,5 @@
-import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { Award, Lock } from 'lucide-react';
 import ProgressTracker from './ProgressTracker';
 import RequirementItem from './RequirementItem';
@@ -10,6 +11,8 @@ import RequirementItem from './RequirementItem';
  * (Bronze, Silver, Gold, Platinum).
  */
 const CertificateCard = ({ tier, requirements, progress, isUnlocked, isLocked }) => {
+  const { t } = useTranslation('common');
+
   
   // High-fidelity SaaS styling maps based on the certificate tier
   const styles = {
@@ -81,9 +84,7 @@ const CertificateCard = ({ tier, requirements, progress, isUnlocked, isLocked })
         
         {/* Verification Badge */}
         {isUnlocked && (
-          <div className="hidden sm:flex px-4 py-1.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full shadow-inner">
-            Verified
-          </div>
+          <div className="hidden sm:flex px-4 py-1.5 bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider rounded-full shadow-inner">{t('verified', 'Verified')}</div>
         )}
       </div>
 
@@ -97,7 +98,7 @@ const CertificateCard = ({ tier, requirements, progress, isUnlocked, isLocked })
 
       {/* Dynamic Requirements List */}
       <div className="space-y-3 relative z-10">
-        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Requirements</h4>
+        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">{t('requirements', 'Requirements')}</h4>
         <div className="space-y-2">
           {requirements.map((req, index) => (
             <RequirementItem 

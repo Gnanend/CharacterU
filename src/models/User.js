@@ -68,6 +68,14 @@ const userSchema = new mongoose.Schema(
 );
 
 /**
+ * Leaderboard Indexes
+ * Optimizes the sorting and filtering of users by score and location.
+ */
+userSchema.index({ characterScore: -1, createdAt: 1 });
+userSchema.index({ country: 1, characterScore: -1, createdAt: 1 });
+userSchema.index({ city: 1, characterScore: -1, createdAt: 1 });
+
+/**
  * Pre-save middleware that automatically hashes the password using bcryptjs
  * before writing it to MongoDB, if the password field is modified or new.
  */

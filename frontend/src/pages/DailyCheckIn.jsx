@@ -1,4 +1,4 @@
-import React from 'react';
+
 import CheckInForm from '../components/checkin/CheckInForm';
 
 /**

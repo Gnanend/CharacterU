@@ -1,5 +1,6 @@
-import React from 'react';
+
 import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { 
   LayoutDashboard, 
@@ -19,15 +20,16 @@ import {
  */
 const Sidebar = () => {
   const { logout } = useAuth();
+  const { t } = useTranslation('common');
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Daily Check-In', path: '/daily-checkin', icon: CalendarCheck },
-    { name: 'Pledges', path: '/pledge', icon: HandHeart },
-    { name: 'Certificates', path: '/certificates', icon: Award },
-    { name: 'Leaderboard', path: '/leaderboard', icon: Trophy },
-    { name: 'Profile', path: '/profile', icon: User },
-    { name: 'Edit Profile', path: '/edit-profile', icon: Settings },
+    { name: t('dashboard', 'Dashboard'), path: '/dashboard', icon: LayoutDashboard },
+    { name: t('dailyCheckIn', 'Daily Check-In'), path: '/daily-checkin', icon: CalendarCheck },
+    { name: t('pledge', 'Pledges'), path: '/pledge', icon: HandHeart },
+    { name: t('certificates', 'Certificates'), path: '/certificates', icon: Award },
+    { name: t('leaderboard', 'Leaderboard'), path: '/leaderboard', icon: Trophy },
+    { name: t('profile', 'Profile'), path: '/profile', icon: User },
+    { name: t('editProfile', 'Edit Profile'), path: '/edit-profile', icon: Settings },
   ];
 
   return (
@@ -39,7 +41,7 @@ const Sidebar = () => {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
-          <span>CharacterU</span>
+          <span>{t('characterU', 'CharacterU')}</span>
         </div>
       </div>
 
@@ -77,7 +79,7 @@ const Sidebar = () => {
           className="flex items-center gap-3 px-3 py-2.5 w-full rounded-xl font-medium text-slate-400 hover:bg-red-900/10 hover:text-red-400 transition-all duration-200 group"
         >
           <LogOut className="w-5 h-5 text-slate-500 group-hover:text-red-400 transition-colors" />
-          Sign Out
+          {t('logout', 'Sign Out')}
         </button>
       </div>
     </aside>

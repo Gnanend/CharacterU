@@ -1,4 +1,5 @@
-import React from 'react';
+import { useTranslation } from 'react-i18next';
+
 import { Link } from 'react-router-dom';
 import { Sparkles, Cpu, Layers, Zap, ArrowRight, UserPlus, Play } from 'lucide-react';
 import Container from '../components/Container';
@@ -8,6 +9,8 @@ import Container from '../components/Container';
  * Uses micro-interactions, dark mode gradients, and rich visuals.
  */
 const Home = () => {
+  const { t } = useTranslation('common');
+
   const stats = [
     { value: '1.2M+', label: 'Characters Generated' },
     { value: '99.9%', label: 'API Uptime' },
@@ -28,8 +31,8 @@ const Home = () => {
     },
     {
       icon: <Zap className="w-6 h-6 text-primary-400" />,
-      title: 'Lightning-Fast Integration',
-      description: 'Integrate the character creator right into your game engine or application with our REST or GraphQL API endpoints.',
+      title: t('lightningFastIntegration', 'Lightning-Fast Integration'),
+      description: t('integrateTheCharacter', 'Integrate the character creator right into your game engine or application with our REST or GraphQL API endpoints.'),
     },
   ];
 
@@ -48,36 +51,29 @@ const Home = () => {
             {/* Promo Pill */}
             <div className="inline-flex items-center space-x-2 bg-primary-500/10 border border-primary-500/30 rounded-full px-4 py-1.5 text-xs font-semibold text-primary-300 tracking-wide hover:bg-primary-500/20 transition-all duration-300 select-none">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Introducing CharacterU v2.0</span>
+              <span>{t('introducingCharacte', 'Introducing CharacterU v2.0')}</span>
             </div>
 
             {/* Heading */}
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] font-sans">
-              The Next-Gen <br />
-              <span className="bg-gradient-to-r from-primary-400 via-primary-500 to-indigo-400 bg-clip-text text-transparent">
-                Character Engine
-              </span>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.1] font-sans">{t('theNextGen', 'The Next-Gen')}<br />
+              <span className="bg-gradient-to-r from-primary-400 via-primary-500 to-indigo-400 bg-clip-text text-transparent">{t('characterEngine', 'Character Engine')}</span>
             </h1>
 
             {/* Description */}
-            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
-              Create, configure, and deploy responsive character creators directly in your SaaS or gaming platform. Leverage production-ready APIs and customizable design models.
-            </p>
+            <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">{t('createConfigureA', 'Create, configure, and deploy responsive character creators directly in your SaaS or gaming platform. Leverage production-ready APIs and customizable design models.')}</p>
 
             {/* Call to Actions */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
               <Link
                 to="/dashboard"
                 className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-bold text-white bg-gradient-to-r from-primary-600 to-primary-500 hover:shadow-xl hover:shadow-primary-500/30 transition-all duration-300 group"
-              >
-                Start Creator <UserPlus className="w-5 h-5" />
+              >{t('startCreator', 'Start Creator')}<UserPlus className="w-5 h-5" />
               </Link>
               
               <a
                 href="#demo"
                 className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-4 rounded-2xl text-base font-semibold text-slate-300 bg-dark-900 border border-dark-800 hover:bg-dark-800 hover:text-white transition-all duration-300"
-              >
-                Watch Demo <Play className="w-4 h-4 text-slate-400" />
+              >{t('watchDemo', 'Watch Demo')}<Play className="w-4 h-4 text-slate-400" />
               </a>
             </div>
 
@@ -107,12 +103,8 @@ const Home = () => {
       <section id="features" className="py-24 relative z-10">
         <Container>
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
-              Built for Scale and Customization
-            </h2>
-            <p className="text-sm md:text-base text-slate-400 leading-relaxed">
-              We provide the core tools, state machinery, and assets required to implement customizable characters in under 10 minutes.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">{t('builtForScaleAnd', 'Built for Scale and Customization')}</h2>
+            <p className="text-sm md:text-base text-slate-400 leading-relaxed">{t('weProvideTheCore', 'We provide the core tools, state machinery, and assets required to implement customizable characters in under 10 minutes.')}</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -145,17 +137,12 @@ const Home = () => {
           <div className="relative rounded-3xl bg-gradient-to-r from-primary-900/40 to-indigo-950/40 border border-primary-800/30 p-8 md:p-12 overflow-hidden shadow-2xl">
             <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary-500/10 rounded-full blur-[80px] pointer-events-none"></div>
             <div className="relative z-10 max-w-xl space-y-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                Ready to power up your game creation workflow?
-              </h2>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-                Connect with us or read our getting started guides to learn how you can utilize CharacterU SDKs.
-              </p>
+              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight">{t('readyToPowerUpYo', 'Ready to power up your game creation workflow?')}</h2>
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed">{t('connectWithUsOrR', 'Connect with us or read our getting started guides to learn how you can utilize CharacterU SDKs.')}</p>
               <Link
                 to="/about"
                 className="inline-flex items-center gap-2 font-semibold text-primary-400 hover:text-primary-300 hover:translate-x-1 duration-200"
-              >
-                Learn more about our mission <ArrowRight className="w-4 h-4" />
+              >{t('learnMoreAboutOur', 'Learn more about our mission')}<ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
