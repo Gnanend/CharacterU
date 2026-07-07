@@ -9,6 +9,15 @@ const profileService = {
   updateProfile: async (profileData) => {
     const response = await axiosInstance.put('/profile/me', profileData);
     return response;
+  },
+
+  uploadAvatar: async (formData) => {
+    const response = await axiosInstance.post('/profile/avatar', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response;
   }
 };
 

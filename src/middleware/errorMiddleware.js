@@ -16,7 +16,13 @@ const errorHandler = (err, req, res, next) => {
   let { statusCode, message } = err;
 
   // Default to 500 if status code is not set or not an ApiError
-  if (!statusCode) statusCode = 500;
+  if (!statusCode) {
+    if (err.name === 'MulterError') {
+      statusCode = 400;
+    } else {
+      statusCode = 500;
+    }
+  }
   if (!message) message = 'Internal Server Error';
 
   const response = {

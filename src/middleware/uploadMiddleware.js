@@ -35,6 +35,36 @@ const uploadVideo = multer({
   },
 });
 
+/**
+ * Configure the Cloudinary storage engine for Avatar images.
+ */
+const avatarStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'characteru/avatars', // Save avatars in this specific folder
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'], // Allowed image formats
+  },
+});
+
+/**
+ * Multer upload middleware configured specifically for avatar images.
+ * Limit file size to 5MB.
+ */
+const uploadAvatar = multer({
+  storage: avatarStorage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new ApiError(400, 'Invalid file type. Only image files (JPG, PNG, WEBP) are allowed.'), false);
+    }
+  },
+});
+
 module.exports = {
   uploadVideo,
+  uploadAvatar,
 };

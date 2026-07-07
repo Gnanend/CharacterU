@@ -14,9 +14,13 @@ const ProfileHeader = ({ user }) => {
 
       {/* Avatar Display */}
       <div className="relative z-10 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-br from-primary-600 to-dark-800 flex items-center justify-center text-5xl font-black text-white shadow-xl border-4 border-dark-950 shrink-0">
-        {user?.fullName?.charAt(0) || 'U'}
+        {user?.avatar ? (
+          <img src={user.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+        ) : (
+          user?.fullName?.charAt(0) || 'U'
+        )}
         {/* Status Indicator */}
-        <div className="absolute bottom-1 right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-dark-950"></div>
+        <div className="absolute bottom-1 right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-dark-950 z-20"></div>
       </div>
       
       {/* Profile Info */}

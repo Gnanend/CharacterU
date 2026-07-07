@@ -50,7 +50,11 @@ const Topbar = ({ onOpenSidebar }) => {
             <p className="text-xs text-slate-500 capitalize font-medium">{user?.role || 'Student'}</p>
           </div>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-900 to-dark-800 border border-primary-500/30 flex items-center justify-center text-primary-400 font-bold uppercase shadow-inner">
-            {user?.fullName?.charAt(0) || 'U'}
+            {user?.avatar ? (
+              <img src={user.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+            ) : (
+              user?.fullName?.charAt(0) || 'U'
+            )}
           </div>
         </div>
 
