@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import authService from '../services/authService';
+import profileService from '../services/profileService';
 import { showToast } from '../components/ui/Toast';
 
 // Create the context
@@ -14,14 +15,37 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const logout = useCallback(() => {
+    // 1. Completely remove JWT token and any potential user data from localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    
+    // 2. Clear authentication state in AuthContext
+    setToken(null);
+    setUser(null);
+    setError(null);
+
+    showToast.success('Logged out successfully');
+
+    // 3. Force redirect to login page (ensures clean slate if Router Navigate doesn't catch it quickly enough)
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
+  }, []);
+
   // Initialize the auth state on mount
   useEffect(() => {
     const initAuth = async () => {
       if (token) {
         try {
-          // If we have a token, fetch the user's latest profile
-          const response = await authService.getMe();
-          setUser(response.user);
+          // If we have a token, fetch the user's latest full profile
+          const response = await profileService.getProfile();
+          if (response.success && response.user) {
+            setUser(response.user);
+          } else {
+            // Fallback for older authService if needed, but profileService is preferred
+            setUser(response.user || response);
+          }
         } catch (err) {
           console.error('Failed to authenticate stored token', err);
           // Token is likely invalid or expired, clean up state
@@ -32,9 +56,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     initAuth();
-  }, [token]);
+  }, [token, logout]);
 
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     setLoading(true);
     setError(null);
     const loadingToastId = showToast.loading('Signing in...');
@@ -58,9 +82,9 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const register = async (userData) => {
+  const register = useCallback(async (userData) => {
     setLoading(true);
     setError(null);
     const loadingToastId = showToast.loading('Creating account...');
@@ -84,32 +108,31 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const logout = useCallback(() => {
-    // 1. Completely remove JWT token and any potential user data from localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    
-    // 2. Clear authentication state in AuthContext
-    setToken(null);
-    setUser(null);
-    setError(null);
-
-    showToast.success('Logged out successfully');
-
-    // 3. Force redirect to login page (ensures clean slate if Router Navigate doesn't catch it quickly enough)
-    if (window.location.pathname !== '/login') {
-      window.location.href = '/login';
-    }
   }, []);
+
+
 
   const updateUser = useCallback((updatedUser) => {
     setUser(updatedUser);
   }, []);
 
-  // Context value to be exposed globally
-  const value = {
+  const refreshUser = useCallback(async () => {
+    if (!token) return;
+    try {
+      const response = await profileService.getProfile();
+      if (response.success && response.user) {
+        setUser(response.user);
+      }
+    } catch (err) {
+      console.error('Failed to refresh user profile:', err);
+      if (err.status === 401) {
+        logout();
+      }
+    }
+  }, [token, logout]);
+
+  // Context value to be exposed globally, memoized to prevent unnecessary re-renders
+  const value = React.useMemo(() => ({
     user,
     token,
     isAuthenticated: !!user,
@@ -119,7 +142,8 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     updateUser,
-  };
+    refreshUser,
+  }), [user, token, loading, error, login, register, logout, updateUser, refreshUser]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

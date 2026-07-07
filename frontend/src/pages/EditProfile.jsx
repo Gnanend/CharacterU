@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import profileService from '../services/profileService';
 import ProfileForm from '../components/profile/ProfileForm';
@@ -7,31 +7,13 @@ import { ShieldCheck, Star, Camera, Loader2 } from 'lucide-react';
 import { useRef } from 'react';
 
 const EditProfile = () => {
-  const { updateUser } = useAuth();
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, updateUser, loading: authLoading } = useAuth();
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const data = await profileService.getProfile();
-        if (data.success && data.user) {
-          setProfileData(data.user);
-        }
-      } catch (err) {
-        console.error('Error fetching profile in EditProfile:', err);
-        showToast.error('Failed to load profile details.');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
-
   const handleProfileSuccess = (updatedUser) => {
-    setProfileData(updatedUser);
+    // updateUser in context handles the state, so we just call it
+    updateUser(updatedUser);
   };
 
   const handleAvatarClick = () => {
@@ -57,7 +39,6 @@ const EditProfile = () => {
       const res = await profileService.uploadAvatar(formData);
       showToast.success('Avatar updated successfully!');
       
-      setProfileData(res.user);
       if (updateUser && res.user) {
         updateUser(res.user);
       }
@@ -72,7 +53,7 @@ const EditProfile = () => {
     }
   };
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="w-full max-w-5xl mx-auto animate-pulse flex flex-col md:flex-row gap-8">
         <div className="w-full md:w-1/3 h-80 bg-dark-900 rounded-2xl border border-dark-800"></div>
@@ -81,7 +62,7 @@ const EditProfile = () => {
     );
   }
 
-  if (!profileData) {
+  if (!user) {
     return (
       <div className="text-center py-20">
         <h2 className="text-2xl font-bold text-white mb-2">Error Loading Profile</h2>
@@ -89,6 +70,8 @@ const EditProfile = () => {
       </div>
     );
   }
+
+  const profileData = user;
 
   // Determine avatar text (first letter of full name)
   const avatarText = profileData.fullName ? profileData.fullName.charAt(0).toUpperCase() : 'U';
