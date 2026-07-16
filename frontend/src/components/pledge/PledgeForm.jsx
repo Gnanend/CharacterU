@@ -137,11 +137,20 @@ const PledgeForm = () => {
           <div className="space-y-2">
             <label className="text-sm font-medium text-slate-300">{t('language', 'Language')}</label>
             <select name="language" value={formData.language} onChange={handleChange} className="w-full px-4 py-3 bg-dark-950 border border-dark-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all appearance-none" disabled={isLoading}>
-              <option value="en">{t('english', 'English')}</option>
-              <option value="es">{t('spanish', 'Spanish')}</option>
-              <option value="fr">{t('french', 'French')}</option>
-              <option value="de">{t('german', 'German')}</option>
-              <option value="other">{t('other', 'Other')}</option>
+              {[
+                { id: 'en', key: 'english' },
+                { id: 'es', key: 'spanish' },
+                { id: 'fr', key: 'french' },
+                { id: 'de', key: 'german' },
+                { id: 'hi', key: 'hindi' },
+                { id: 'te', key: 'telugu' },
+                { id: 'ta', key: 'tamil' },
+                { id: 'kn', key: 'kannada' },
+                { id: 'ml', key: 'malayalam' },
+                { id: 'other', key: 'other' }
+              ].map(lang => (
+                <option key={lang.id} value={lang.id}>{t(lang.key)}</option>
+              ))}
             </select>
           </div>
 

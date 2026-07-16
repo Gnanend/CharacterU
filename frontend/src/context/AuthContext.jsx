@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
   const login = useCallback(async (credentials) => {
     setLoading(true);
     setError(null);
-    const loadingToastId = showToast.loading('Signing in...');
+    const loadingToastId = showToast.loading(t('signingIn', 'Signing in...'));
     try {
       const response = await authService.login(credentials);
       
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
   const register = useCallback(async (userData) => {
     setLoading(true);
     setError(null);
-    const loadingToastId = showToast.loading('Creating account...');
+    const loadingToastId = showToast.loading(t('creatingAccount', 'Creating account...'));
     try {
       const response = await authService.register(userData);
       

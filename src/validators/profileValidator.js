@@ -14,76 +14,77 @@ exports.validateProfileUpdate = (req, res, next) => {
   const unexpectedFields = requestFields.filter(field => !allowedFields.includes(field));
   
   if (unexpectedFields.length > 0) {
-    errors.push(`Unexpected fields not allowed: ${unexpectedFields.join(', ')}`);
+    errors.push('validation.unexpectedFields');
   }
 
   // fullName: optional (for partial updates), trimmed, min 2, max 100
   if (fullName !== undefined) {
     if (typeof fullName !== 'string') {
-      errors.push('Full name must be a string');
+      errors.push('validation.fullName.invalid');
     } else if (hasXSS(fullName)) {
-      errors.push('Full name contains invalid characters');
+      errors.push('validation.fullName.invalidChars');
     } else if (fullName.trim().length < 2) {
-      errors.push('Full name must be at least 2 characters long');
+      errors.push('validation.fullName.minLength');
     } else if (fullName.trim().length > 100) {
-      errors.push('Full name cannot exceed 100 characters');
+      errors.push('validation.fullName.maxLength');
     }
   }
 
   // city: optional, trimmed, max 100
   if (city !== undefined && city !== null) {
     if (typeof city !== 'string') {
-      errors.push('City must be a string');
+      errors.push('validation.city.invalid');
     } else if (hasXSS(city)) {
-      errors.push('City contains invalid characters');
+      errors.push('validation.city.invalidChars');
     } else if (city.trim() === '') {
-      errors.push('City cannot be an empty string');
+      errors.push('validation.city.empty');
     } else if (city.trim().length > 100) {
-      errors.push('City cannot exceed 100 characters');
+      errors.push('validation.city.maxLength');
     }
   }
 
   // country: optional, trimmed, max 100
   if (country !== undefined && country !== null) {
     if (typeof country !== 'string') {
-      errors.push('Country must be a string');
+      errors.push('validation.country.invalid');
     } else if (hasXSS(country)) {
-      errors.push('Country contains invalid characters');
+      errors.push('validation.country.invalidChars');
     } else if (country.trim() === '') {
-      errors.push('Country cannot be an empty string');
+      errors.push('validation.country.empty');
     } else if (country.trim().length > 100) {
-      errors.push('Country cannot exceed 100 characters');
+      errors.push('validation.country.maxLength');
     }
   }
 
   // language: optional, trimmed, max 10
   if (language !== undefined && language !== null) {
     if (typeof language !== 'string') {
-      errors.push('Language must be a string');
+      errors.push('validation.language.invalid');
     } else if (language.trim() === '') {
-      errors.push('Language cannot be an empty string');
+      errors.push('validation.language.empty');
     } else if (!/^[a-zA-Z\-]{2,10}$/.test(language.trim())) {
-      errors.push('Language must be a valid language code');
+      errors.push('validation.language.invalidCode');
     }
   }
 
   // avatar: optional, must be valid URL
   if (avatar !== undefined && avatar !== null) {
     if (typeof avatar !== 'string') {
-      errors.push('Avatar must be a string');
+      errors.push('validation.avatar.invalid');
     } else if (avatar.trim() === '') {
-      errors.push('Avatar cannot be an empty string');
+      errors.push('validation.avatar.empty');
     } else {
       try {
         new URL(avatar.trim());
       } catch (e) {
-        errors.push('Avatar must be a valid URL');
+        errors.push('validation.avatar.invalidUrl');
       }
     }
   }
 
   if (errors.length > 0) {
-    return next(new ApiError(400, errors.join('. ')));
+    // Send the first error key to the frontend
+    return next(new ApiError(400, 'Validation failed', errors[0]));
   }
 
   // Trim the values on the request body so controllers receive clean data

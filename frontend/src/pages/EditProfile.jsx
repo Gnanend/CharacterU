@@ -12,8 +12,8 @@ const EditProfile = () => {
     loading: authLoading
   } = useAuth();
   const {
-    t
-  } = useTranslation('profile');
+    t, i18n
+  } = useTranslation(['profile', 'common']);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const fileInputRef = useRef(null);
   const handleProfileSuccess = updatedUser => {
@@ -69,12 +69,12 @@ const EditProfile = () => {
   const avatarText = profileData.fullName ? profileData.fullName.charAt(0).toUpperCase() : 'U';
 
   // Format member since date
-  const memberSince = new Date(profileData.createdAt).toLocaleDateString('en-US', {
+  const memberSince = new Date(profileData.createdAt).toLocaleDateString(i18n.language, {
     month: 'short',
     year: 'numeric'
   });
   return <div className="w-full max-w-5xl mx-auto pb-12 animate-in fade-in duration-500">
-      <h1 className="text-3xl font-bold text-white mb-8">{t('editProfile', 'Edit Profile')}</h1>
+      <h1 className="text-3xl font-bold text-white mb-8">{t('editProfile', { ns: 'common', defaultValue: 'Edit Profile' })}</h1>
       
       <div className="flex flex-col md:flex-row gap-8">
         
@@ -100,17 +100,17 @@ const EditProfile = () => {
             <h2 className="text-xl font-bold text-white mb-1 z-10">{profileData.fullName}</h2>
             <p className="text-primary-400 font-medium capitalize text-sm mb-4 z-10 flex items-center gap-1 justify-center">
               <ShieldCheck className="w-4 h-4" />
-              {profileData.role || 'Student'}
+              {t(`common:${profileData.role || 'student'}`, profileData.role || 'Student')}
             </p>
             
             <div className="w-full flex justify-between items-center py-4 border-t border-dark-800 mt-2 z-10">
               <div className="text-left">
-                <p className="text-xs text-slate-500 uppercase tracking-wider">{t('memberSince', 'Member Since')}</p>
+                <p className="text-xs text-slate-500 uppercase tracking-wider">{t('memberSince', { ns: 'common', defaultValue: 'MEMBER SINCE' })}</p>
                 <p className="text-sm text-slate-300 font-medium">{memberSince}</p>
               </div>
               
               <div className="text-right flex flex-col items-end">
-                 <p className="text-xs text-slate-500 uppercase tracking-wider">{t('charScore', 'Char Score')}</p>
+                 <p className="text-xs text-slate-500 uppercase tracking-wider">{t('charScore', { ns: 'common', defaultValue: 'CHAR SCORE' })}</p>
                  <div className="flex items-center gap-1 bg-yellow-400/10 px-2 py-1 rounded-md text-yellow-400 mt-1">
                    <Star className="w-3 h-3 fill-yellow-400" />
                    <span className="text-sm font-bold">{profileData.characterScore || 0}</span>

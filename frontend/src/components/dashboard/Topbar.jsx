@@ -47,7 +47,7 @@ const Topbar = ({
         <div className="flex items-center gap-3 pl-4 md:pl-6 border-l border-dark-800">
           <div className="hidden sm:block text-right">
             <p className="text-sm font-medium text-white truncate max-w-[120px]">{user?.fullName || 'User'}</p>
-            <p className="text-xs text-slate-500 capitalize font-medium">{user?.role || 'Student'}</p>
+            <p className="text-xs text-slate-500 capitalize font-medium">{t(user?.role || 'student', user?.role || 'Student')}</p>
           </div>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-900 to-dark-800 border border-primary-500/30 flex items-center justify-center text-primary-400 font-bold uppercase shadow-inner">
             {user?.avatar ? <img src={user.avatar} alt={t("avatar", "Avatar")} className="w-full h-full rounded-full object-cover" /> : user?.fullName?.charAt(0) || 'U'}

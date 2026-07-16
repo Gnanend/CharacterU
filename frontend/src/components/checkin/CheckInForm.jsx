@@ -21,18 +21,18 @@ const CheckInForm = () => {
   const { t } = useTranslation('common');
 
   const activitiesList = [
-    { id: 'helpedSomeone', title: t('helpedSomeone', 'Helped Someone'), icon: HeartHandshake },
-    { id: 'avoidedConflict', title: t('avoidedConflict', 'Avoided Conflict'), icon: ShieldAlert },
-    { id: 'exercised', title: t('exercised', 'Exercised'), icon: Dumbbell },
-    { id: 'learnedSomething', title: t('learnedSomething', 'Learned Something'), icon: Brain },
-    { id: 'caredForFamily', title: t('caredForFamily', 'Cared For Family'), icon: Home },
-    { id: 'plantedTree', title: t('plantedTree', 'Planted Tree'), icon: TreePine },
-    { id: 'avoidedHate', title: t('avoidedHate', 'Avoided Hate'), icon: MessageSquareOff },
-    { id: 'donated', title: t('donated', 'Donated'), icon: Coins },
-    { id: 'volunteered', title: t('volunteered', 'Volunteered'), icon: Users },
-    { id: 'practicedHonesty', title: t('practicedHonesty', 'Practiced Honesty'), icon: Scale },
-    { id: 'respectedOthers', title: t('respectedOthers', 'Respected Others'), icon: ThumbsUp },
-    { id: 'avoidedWaste', title: t('avoidedWaste', 'Avoided Waste'), icon: Recycle },
+    { id: 'helpedSomeone', titleKey: 'helpedSomeone', icon: HeartHandshake },
+    { id: 'avoidedConflict', titleKey: 'avoidedConflict', icon: ShieldAlert },
+    { id: 'exercised', titleKey: 'exercised', icon: Dumbbell },
+    { id: 'learnedSomething', titleKey: 'learnedSomething', icon: Brain },
+    { id: 'caredForFamily', titleKey: 'caredForFamily', icon: Home },
+    { id: 'plantedTree', titleKey: 'plantedTree', icon: TreePine },
+    { id: 'avoidedHate', titleKey: 'avoidedHate', icon: MessageSquareOff },
+    { id: 'donated', titleKey: 'donated', icon: Coins },
+    { id: 'volunteered', titleKey: 'volunteered', icon: Users },
+    { id: 'practicedHonesty', titleKey: 'practicedHonesty', icon: Scale },
+    { id: 'respectedOthers', titleKey: 'respectedOthers', icon: ThumbsUp },
+    { id: 'avoidedWaste', titleKey: 'avoidedWaste', icon: Recycle },
   ];
 
   // Map all activities natively to false
@@ -128,7 +128,7 @@ const CheckInForm = () => {
           {activitiesList.map((activity) => (
             <ActivityCard
               key={activity.id}
-              title={activity.title}
+              title={t(activity.titleKey)}
               icon={activity.icon}
               isSelected={activities[activity.id]}
               onClick={() => toggleActivity(activity.id)}

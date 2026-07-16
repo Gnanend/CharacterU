@@ -29,7 +29,7 @@ const Dashboard = () => {
     totalScore: 0,
     streak: 0,
     pledgesCompleted: 0,
-    rank: 'Bronze'
+    rank: 'bronze'
   });
   React.useEffect(() => {
     const fetchAnalytics = async () => {
@@ -37,10 +37,10 @@ const Dashboard = () => {
         const response = await analyticsService.getDashboardAnalytics();
         const data = response.data;
 
-        let rank = t('bronze', 'Bronze');
-        if (data.characterScore >= 50) rank = t('silver', 'Silver');
-        if (data.characterScore >= 150) rank = t('gold', 'Gold');
-        if (data.characterScore >= 500) rank = t('platinum', 'Platinum');
+        let rank = 'bronze';
+        if (data.characterScore >= 50) rank = 'silver';
+        if (data.characterScore >= 150) rank = 'gold';
+        if (data.characterScore >= 500) rank = 'platinum';
         setStats({
           totalScore: data.characterScore,
           streak: data.currentStreak,
@@ -73,7 +73,7 @@ const Dashboard = () => {
             <StatCard title={t("characterScore", "Character Score")} value={stats.totalScore} trend={10} trendLabel={t("vsLastWeek", "vs last week")} icon={Star} colorClass="text-yellow-400" bgClass="bg-yellow-400/10" />
             <StatCard title={t("currentStreak", "Current Streak")} value={t("daysCount", "{{count}} Days", { count: stats.streak })} icon={Flame} colorClass="text-orange-400" bgClass="bg-orange-400/10" />
             <StatCard title={t("pledgesActive", "Pledges Active")} value={stats.pledgesCompleted} trend={0} trendLabel={t("pendingReview", "pending review")} icon={Target} colorClass="text-emerald-400" bgClass="bg-emerald-400/10" />
-            <StatCard title={t("currentRank", "Current Rank")} value={stats.rank} icon={Activity} colorClass="text-purple-400" bgClass="bg-purple-400/10" />
+            <StatCard title={t("currentRank", "Current Rank")} value={t(stats.rank, stats.rank.charAt(0).toUpperCase() + stats.rank.slice(1))} icon={Activity} colorClass="text-purple-400" bgClass="bg-purple-400/10" />
           </>}
       </div>
 

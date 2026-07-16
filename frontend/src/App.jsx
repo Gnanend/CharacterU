@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
 import Leaderboard from './pages/Leaderboard';
 import Certificates from './pages/Certificates';
+import Learning from './pages/Learning';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -55,6 +56,7 @@ function App() {
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/edit-profile" element={<EditProfile />} />
+              <Route path="/learning" element={<Learning />} />
             </Route>
 
             {/* Fallback for undefined routes */}

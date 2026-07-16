@@ -1,1 +1,25 @@
-{}
+{
+  "title": "Learning Modules",
+  "subtitle": "Expand your character knowledge with our curated courses.",
+  "beginner": "Beginner",
+  "intermediate": "Intermediate",
+  "advanced": "Advanced",
+  "mins": "mins",
+  "xp": "XP",
+  "startLearning": "Start Learning",
+  "noCoursesTitle": "No courses available",
+  "noCoursesDesc": "We are currently preparing new learning modules. Check back soon!",
+  "fetchError": "Could not load courses at this time.",
+  "integrityTitle": "Integrity Foundation",
+  "integrityDescription": "Learn the core principles of integrity, honesty, and maintaining strong moral principles in daily life.",
+  "respectTitle": "The Power of Respect",
+  "respectDescription": "Understand how respect builds trust and fosters healthy relationships in personal and professional environments.",
+  "leadershipTitle": "Leadership Essentials",
+  "leadershipDescription": "Master the art of inspiring others, taking initiative, and leading by example.",
+  "responsibilityTitle": "Taking Responsibility",
+  "responsibilityDescription": "Discover the importance of owning your actions, decisions, and learning from mistakes.",
+  "empathyTitle": "Practicing Empathy",
+  "empathyDescription": "Develop your emotional intelligence and learn to understand and share the feelings of others.",
+  "disciplineTitle": "Discipline & Focus",
+  "disciplineDescription": "Build robust habits, overcome procrastination, and achieve your long-term goals through strict discipline."
+}

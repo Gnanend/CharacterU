@@ -83,7 +83,12 @@ const ProfileForm = ({
         onSuccess(res.user);
       }
     } catch (err) {
-      showToast.error(err.response?.data?.message || err.message || t('failedToUpdateProfile', 'Failed to update profile'));
+      const errorKey = err.response?.data?.errorKey || err.data?.errorKey;
+      if (errorKey) {
+        showToast.error(t(errorKey));
+      } else {
+        showToast.error(err.response?.data?.message || err.data?.message || err.message || t('failedToUpdateProfile', 'Failed to update profile'));
+      }
     } finally {
       setIsSaving(false);
     }
@@ -128,12 +133,16 @@ const ProfileForm = ({
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">{t('preferredLanguageStar', 'Preferred Language *')}</label>
             <select name="language" value={formData.language} onChange={handleChange} className={`w-full bg-dark-950 border ${errors.language ? 'border-red-500 focus:ring-red-500' : 'border-dark-700 focus:ring-primary-500'} text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:border-transparent transition-all appearance-none`}>
-              <option value="en">{t('english', 'English')}</option>
-              <option value="hi">{t('hindi', 'Hindi')}</option>
-              <option value="te">{t('telugu', 'Telugu')}</option>
-              <option value="ta">{t('tamil', 'Tamil')}</option>
-              <option value="kn">{t('kannada', 'Kannada')}</option>
-              <option value="ml">{t('malayalam', 'Malayalam')}</option>
+              {[
+                { id: 'en', key: 'english' },
+                { id: 'hi', key: 'hindi' },
+                { id: 'te', key: 'telugu' },
+                { id: 'ta', key: 'tamil' },
+                { id: 'kn', key: 'kannada' },
+                { id: 'ml', key: 'malayalam' }
+              ].map(lang => (
+                <option key={lang.id} value={lang.id}>{t(lang.key)}</option>
+              ))}
             </select>
             {errors.language && <p className="text-sm text-red-500 mt-1">{errors.language}</p>}
           </div>

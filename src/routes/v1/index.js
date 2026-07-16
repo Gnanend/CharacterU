@@ -18,6 +18,7 @@ const checkInRoutes = require('./checkInRoutes');
 const analyticsRoutes = require('./analyticsRoutes');
 const leaderboardRoutes = require('./leaderboardRoutes');
 const profileRoutes = require('./profileRoutes');
+const learningRoutes = require('./learningRoutes');
 
 // Mount routes
 router.use('/auth', authRoutes);
@@ -26,5 +27,6 @@ router.use('/checkins', checkInRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/leaderboard', leaderboardRoutes);
 router.use('/profile', profileRoutes);
+router.use('/learning', learningRoutes);
 
 module.exports = router;
