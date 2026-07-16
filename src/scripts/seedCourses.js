@@ -2,6 +2,8 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const connectDB = require('../config/db');
 const Course = require('../models/Course');
+const Module = require('../models/Module');
+const Lesson = require('../models/Lesson');
 
 const coursesToSeed = [
   {
@@ -81,13 +83,54 @@ const seedCourses = async () => {
 
     for (const courseData of coursesToSeed) {
       const existingCourse = await Course.findOne({ slug: courseData.slug });
-      
+      let course;
       if (existingCourse) {
-        await Course.updateOne({ slug: courseData.slug }, { $set: courseData });
+        course = await Course.findOneAndUpdate({ slug: courseData.slug }, { $set: courseData }, { new: true });
         skipped++; // Treating updates as skipped for the original seed log structure
       } else {
-        await Course.create(courseData);
+        course = await Course.create(courseData);
         inserted++;
+      }
+
+      // Seed Modules and Lessons for this course
+      const moduleData = {
+        course: course._id,
+        title: `Introduction to ${courseData.titleKey}`,
+        description: 'Basic concepts and introduction',
+        order: 1,
+        isPublished: true
+      };
+      
+      let module = await Module.findOne({ course: course._id, title: moduleData.title });
+      if (!module) {
+        module = await Module.create(moduleData);
+      }
+
+      let videoUrl = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+      if (courseData.slug === 'integrity-foundation') videoUrl = 'https://www.youtube.com/watch?v=mPJoi08HaRY';
+      else if (courseData.slug === 'power-of-respect') videoUrl = 'https://www.youtube.com/watch?v=VG3arGjg0Hk';
+      else if (courseData.slug === 'leadership-essentials') videoUrl = 'https://www.youtube.com/watch?v=r9u5YcEAkE0';
+      else if (courseData.slug === 'taking-responsibility') videoUrl = 'https://www.youtube.com/watch?v=0xW6hCnlSjE';
+      else if (courseData.slug === 'practicing-empathy') videoUrl = 'https://www.youtube.com/watch?v=jz1g1SpD9Zo'; // PASSED previously
+      else if (courseData.slug === 'discipline-focus') videoUrl = 'https://www.youtube.com/watch?v=5oX7uRcnHdI';
+
+      const lessonData = {
+        module: module._id,
+        title: `Lesson 1: Basics of ${courseData.titleKey}`,
+        description: 'Learn the foundational elements',
+        content: 'This is the content of the lesson.',
+        videoUrl: videoUrl,
+        estimatedMinutes: courseData.estimatedMinutes,
+        xpReward: courseData.xpReward,
+        order: 1,
+        isPublished: true
+      };
+
+      let lesson = await Lesson.findOne({ module: module._id, title: lessonData.title });
+      if (!lesson) {
+        await Lesson.create(lessonData);
+      } else {
+        await Lesson.updateOne({ _id: lesson._id }, { $set: { videoUrl: videoUrl } });
       }
     }
 

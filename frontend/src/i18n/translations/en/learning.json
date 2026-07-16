@@ -21,5 +21,14 @@
   "empathyTitle": "Practicing Empathy",
   "empathyDescription": "Develop your emotional intelligence and learn to understand and share the feelings of others.",
   "disciplineTitle": "Discipline & Focus",
-  "disciplineDescription": "Build robust habits, overcome procrastination, and achieve your long-term goals through strict discipline."
+  "disciplineTitle": "Discipline & Focus",
+  "disciplineDescription": "Build robust habits, overcome procrastination, and achieve your long-term goals through strict discipline.",
+  "courseDetails": "Course Details",
+  "modules": "Modules",
+  "lessons": "Lessons",
+  "markComplete": "Mark Complete",
+  "lessonCompleted": "Lesson Completed",
+  "nextLesson": "Next Lesson",
+  "previousLesson": "Previous Lesson",
+  "completed": "Completed"
 }

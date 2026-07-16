@@ -17,10 +17,39 @@ class LearningController {
   async getCourseDetails(req, res, next) {
     try {
       const { slug } = req.params;
-      const courseData = await learningService.getCourseBySlug(slug);
+      const userId = req.user._id;
+      const courseData = await learningService.getCourseBySlug(slug, userId);
       res.status(200).json({
         status: 'success',
         data: courseData
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getLesson(req, res, next) {
+    try {
+      const { lessonId } = req.params;
+      const userId = req.user._id;
+      const lesson = await learningService.getLesson(lessonId, userId);
+      res.status(200).json({
+        status: 'success',
+        data: lesson
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async completeLesson(req, res, next) {
+    try {
+      const { lessonId } = req.params;
+      const userId = req.user._id;
+      const progress = await learningService.completeLesson(userId, lessonId);
+      res.status(200).json({
+        status: 'success',
+        data: progress
       });
     } catch (error) {
       next(error);

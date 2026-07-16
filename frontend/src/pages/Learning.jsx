@@ -7,9 +7,11 @@ import EmptyState from '../components/ui/EmptyState';
 import { showToast } from '../components/ui/Toast';
 import learningService from '../services/learningService';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const Learning = () => {
   const { t } = useTranslation('learning');
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -90,7 +92,7 @@ const Learning = () => {
                   </div>
                 </div>
 
-                <Button variant="premium" className="w-full" icon={PlayCircle} onClick={() => {}}>
+                <Button variant="premium" className="w-full" icon={PlayCircle} onClick={() => navigate(`/learning/course/${course.slug}`)}>
                   {t('startLearning', 'Start Learning')}
                 </Button>
               </div>
