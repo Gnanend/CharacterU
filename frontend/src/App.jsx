@@ -9,6 +9,8 @@ import Register from './pages/Register';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Pledge from './pages/Pledge';
+import CertificatePage from './pages/Certificate';
+import VerifyCertificate from './pages/VerifyCertificate';
 import DailyCheckIn from './pages/DailyCheckIn';
 import Profile from './pages/Profile';
 import EditProfile from './pages/EditProfile';
@@ -41,6 +43,7 @@ function App() {
               <Route path="about" element={<About />} />
               <Route path="register" element={<Register />} />
               <Route path="login" element={<Login />} />
+              <Route path="verify/:token" element={<VerifyCertificate />} />
             </Route>
 
             {/* Protected SaaS Application Layout wrapper */}
@@ -54,6 +57,7 @@ function App() {
               {/* These routes will render inside DashboardLayout's <Outlet /> */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/pledge" element={<Pledge />} />
+              <Route path="/certificate" element={<CertificatePage />} />
               <Route path="/daily-checkin" element={<DailyCheckIn />} />
               <Route path="/certificates" element={<Certificates />} />
               <Route path="/leaderboard" element={<Leaderboard />} />

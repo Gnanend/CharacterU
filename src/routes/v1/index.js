@@ -19,6 +19,7 @@ const analyticsRoutes = require('./analyticsRoutes');
 const leaderboardRoutes = require('./leaderboardRoutes');
 const profileRoutes = require('./profileRoutes');
 const learningRoutes = require('./learningRoutes');
+const certificateRoutes = require('./certificateRoutes');
 
 // Mount routes
 router.use('/auth', authRoutes);
@@ -28,5 +29,6 @@ router.use('/analytics', analyticsRoutes);
 router.use('/leaderboard', leaderboardRoutes);
 router.use('/profile', profileRoutes);
 router.use('/learning', learningRoutes);
+router.use('/certificates', certificateRoutes);
 
 module.exports = router;
