@@ -21,17 +21,18 @@ const extractPublicId = (url) => {
  * Update the user's avatar in the database and clean up the old one in Cloudinary.
  * @param {string} userId - The user's ID
  * @param {string} newAvatarUrl - The new Cloudinary URL uploaded via Multer
+ * @param {string} newPublicId - The new Cloudinary public_id
  * @returns {Promise<Object>} The updated User document
  */
-exports.updateAvatar = async (userId, newAvatarUrl) => {
+exports.updateAvatar = async (userId, newAvatarUrl, newPublicId) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new ApiError(404, 'User not found');
   }
 
   // Delete previous avatar from Cloudinary to prevent orphaned files
-  if (user.avatar) {
-    const oldPublicId = extractPublicId(user.avatar);
+  if (user.cloudinary_public_id || user.avatar) {
+    const oldPublicId = user.cloudinary_public_id || extractPublicId(user.avatar);
     if (oldPublicId) {
       try {
         await cloudinary.uploader.destroy(oldPublicId);
@@ -43,6 +44,7 @@ exports.updateAvatar = async (userId, newAvatarUrl) => {
   }
 
   user.avatar = newAvatarUrl;
+  user.cloudinary_public_id = newPublicId;
   await user.save();
 
   return user;

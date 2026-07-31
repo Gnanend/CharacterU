@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    cloudinary_public_id: {
+      type: String,
+      default: '',
+    },
     characterScore: {
       type: Number,
       default: 0,

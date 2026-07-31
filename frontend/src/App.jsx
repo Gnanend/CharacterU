@@ -17,6 +17,7 @@ import Certificates from './pages/Certificates';
 import Learning from './pages/Learning';
 import CourseDetails from './pages/CourseDetails';
 import LessonViewer from './pages/LessonViewer';
+import LessonQuiz from './pages/LessonQuiz';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
@@ -61,6 +62,7 @@ function App() {
               <Route path="/learning" element={<Learning />} />
               <Route path="/learning/course/:slug" element={<CourseDetails />} />
               <Route path="/learning/lesson/:lessonId" element={<LessonViewer />} />
+              <Route path="/learning/lesson/:lessonId/quiz" element={<LessonQuiz />} />
             </Route>
 
             {/* Fallback for undefined routes */}

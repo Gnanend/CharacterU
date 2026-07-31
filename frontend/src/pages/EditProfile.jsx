@@ -15,6 +15,7 @@ const EditProfile = () => {
     t, i18n
   } = useTranslation(['profile', 'common']);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [previewAvatar, setPreviewAvatar] = useState(null);
   const fileInputRef = useRef(null);
   const handleProfileSuccess = updatedUser => {
     // updateUser in context handles the state, so we just call it
@@ -28,10 +29,21 @@ const EditProfile = () => {
   const handleFileChange = async e => {
     const file = e.target.files[0];
     if (!file) return;
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      showToast.error(t('errors.fileType', 'Invalid file type. Only JPG, PNG and WEBP are allowed.'));
+      return;
+    }
+
     if (file.size > 5 * 1024 * 1024) {
       showToast.error(t('errors.fileSize', 'File size must be under 5MB'));
       return;
     }
+    // Create preview
+    const previewUrl = URL.createObjectURL(file);
+    setPreviewAvatar(previewUrl);
+
     setIsUploadingAvatar(true);
     try {
       const formData = new FormData();
@@ -46,6 +58,7 @@ const EditProfile = () => {
       showToast.error(err.message || t('errors.avatarUploadFailed', 'Failed to upload avatar'));
     } finally {
       setIsUploadingAvatar(false);
+      setPreviewAvatar(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -92,7 +105,7 @@ const EditProfile = () => {
                   <Camera className="w-8 h-8 text-white" />
                 </div>}
 
-              {profileData.avatar ? <img src={profileData.avatar} alt={t("avatar", "Avatar")} className="w-full h-full rounded-full object-cover" /> : avatarText}
+              {(previewAvatar || profileData.avatar) ? <img src={previewAvatar || profileData.avatar} alt={t("avatar", "Avatar")} className="w-full h-full rounded-full object-cover" /> : avatarText}
             </div>
             
             <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/jpeg, image/png, image/webp" className="hidden" />

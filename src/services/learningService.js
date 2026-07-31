@@ -4,6 +4,9 @@ const Lesson = require('../models/Lesson');
 const { AppError } = require('../middleware/errorMiddleware');
 const Progress = require('../models/Progress');
 const User = require('../models/User');
+const Quiz = require('../models/Quiz');
+const Question = require('../models/Question');
+const QuizAttempt = require('../models/QuizAttempt');
 
 class LearningService {
   async getPublishedCourses() {
@@ -82,7 +85,82 @@ class LearningService {
     };
   }
 
-  async completeLesson(userId, lessonId) {
+  async getLessonQuiz(lessonId) {
+    const quiz = await Quiz.findOne({ lesson: lessonId, isPublished: true });
+    if (!quiz) {
+      const error = new Error('Quiz not found for this lesson');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const questions = await Question.find({ quiz: quiz._id }).select('-correctAnswer -explanationKey');
+    
+    return {
+      quiz,
+      questions
+    };
+  }
+
+  async submitQuiz(userId, lessonId, answers) {
+    const quiz = await Quiz.findOne({ lesson: lessonId, isPublished: true });
+    if (!quiz) {
+      const error = new Error('Quiz not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const questions = await Question.find({ quiz: quiz._id });
+    
+    let score = 0;
+    const totalPossibleScore = questions.reduce((acc, q) => acc + q.points, 0);
+    
+    // Evaluate answers
+    const evaluatedAnswers = answers.map(ans => {
+      const question = questions.find(q => q._id.toString() === ans.questionId);
+      const isCorrect = question && question.correctAnswer === ans.selectedAnswer;
+      if (isCorrect) {
+        score += question.points;
+      }
+      return {
+        questionId: ans.questionId,
+        selectedAnswer: ans.selectedAnswer
+      };
+    });
+
+    const percentage = totalPossibleScore > 0 ? Math.round((score / totalPossibleScore) * 100) : 0;
+    const passed = percentage >= quiz.passingScore;
+
+    let earnedXP = 0;
+
+    // Check if user already passed this quiz
+    const previousPass = await QuizAttempt.findOne({ user: userId, quiz: quiz._id, passed: true });
+
+    if (passed && !previousPass) {
+      const lesson = await Lesson.findById(lessonId);
+      earnedXP = lesson ? lesson.xpReward : 0;
+      await this.awardQuizXP(userId, lessonId, earnedXP);
+    }
+
+    const attempt = new QuizAttempt({
+      user: userId,
+      quiz: quiz._id,
+      answers: evaluatedAnswers,
+      score,
+      percentage,
+      passed,
+      earnedXP
+    });
+
+    await attempt.save();
+
+    // Return full questions with explanations so user can review
+    return {
+      attempt,
+      questions
+    };
+  }
+
+  async awardQuizXP(userId, lessonId, earnedXP) {
     const lesson = await Lesson.findById(lessonId).populate('module');
     if (!lesson) {
       const error = new Error('Lesson not found');
@@ -111,7 +189,7 @@ class LearningService {
     // Add to completed
     progress.completedLessons.push(lessonId);
     progress.lastLesson = lessonId;
-    progress.xpEarned += lesson.xpReward;
+    progress.xpEarned += earnedXP;
 
     // Calculate percentage
     const modules = await Module.find({ course: courseId, isPublished: true });
@@ -129,9 +207,11 @@ class LearningService {
     await progress.save();
 
     // Award XP to user
-    await User.findByIdAndUpdate(userId, {
-      $inc: { characterScore: lesson.xpReward }
-    });
+    if (earnedXP > 0) {
+      await User.findByIdAndUpdate(userId, {
+        $inc: { characterScore: earnedXP }
+      });
+    }
 
     return progress;
   }

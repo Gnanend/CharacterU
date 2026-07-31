@@ -23,6 +23,20 @@ class LearningService {
   }
 
   /**
+   * Fetch quiz for a specific lesson
+   */
+  async getLessonQuiz(lessonId) {
+    return await axiosInstance.get(`/learning/lesson/${lessonId}/quiz`);
+  }
+
+  /**
+   * Submit quiz for a specific lesson
+   */
+  async submitQuiz(lessonId, data) {
+    return await axiosInstance.post(`/learning/lesson/${lessonId}/quiz`, data);
+  }
+
+  /**
    * Mark a lesson as complete
    */
   async completeLesson(lessonId) {

@@ -14,9 +14,11 @@ exports.uploadAvatar = asyncHandler(async (req, res) => {
   }
 
   // The cloudinary URL is returned by multer-storage-cloudinary in req.file.path
+  // The cloudinary public_id is returned in req.file.filename
   const newAvatarUrl = req.file.path;
+  const newPublicId = req.file.filename;
 
-  const user = await avatarService.updateAvatar(req.user.id, newAvatarUrl);
+  const user = await avatarService.updateAvatar(req.user.id, newAvatarUrl, newPublicId);
 
   res.status(200).json({
     success: true,

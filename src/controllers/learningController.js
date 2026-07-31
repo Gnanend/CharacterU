@@ -46,10 +46,42 @@ class LearningController {
     try {
       const { lessonId } = req.params;
       const userId = req.user._id;
+      
       const progress = await learningService.completeLesson(userId, lessonId);
+      
       res.status(200).json({
         status: 'success',
         data: progress
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getLessonQuiz(req, res, next) {
+    try {
+      const { lessonId } = req.params;
+      const quizData = await learningService.getLessonQuiz(lessonId);
+      res.status(200).json({
+        status: 'success',
+        data: quizData
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async submitQuiz(req, res, next) {
+    try {
+      const { lessonId } = req.params;
+      const userId = req.user._id;
+      const { answers } = req.body;
+      
+      const result = await learningService.submitQuiz(userId, lessonId, answers);
+      
+      res.status(200).json({
+        status: 'success',
+        data: result
       });
     } catch (error) {
       next(error);

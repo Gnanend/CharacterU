@@ -15,7 +15,6 @@ const LessonViewer = () => {
   
   const [lesson, setLesson] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCompleting, setIsCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
@@ -34,18 +33,8 @@ const LessonViewer = () => {
     fetchLesson();
   }, [lessonId, navigate, t]);
 
-  const handleMarkComplete = async () => {
-    try {
-      setIsCompleting(true);
-      const res = await learningService.completeLesson(lessonId);
-      setIsCompleted(true);
-      showToast.success(t('lessonCompleted', 'Lesson completed successfully!'));
-      // In a full implementation, we'd unlock the next lesson or redirect here.
-    } catch (err) {
-      showToast.error(t('completeError', 'Could not mark lesson as complete.'));
-    } finally {
-      setIsCompleting(false);
-    }
+  const handleTakeQuiz = () => {
+    navigate(`/learning/lesson/${lessonId}/quiz`);
   };
 
   if (isLoading) {
@@ -89,16 +78,13 @@ const LessonViewer = () => {
               <span className="text-slate-400">Time</span>
               <span className="font-bold text-slate-300">{lesson.estimatedMinutes} {t('mins', 'mins')}</span>
             </div>
-            
             <Button 
               variant={isCompleted ? "outline" : "premium"}
-              className="w-full py-3"
-              onClick={handleMarkComplete}
-              isLoading={isCompleting}
-              disabled={isCompleted}
+              className="w-full py-3 mt-2"
+              onClick={handleTakeQuiz}
               icon={isCompleted ? CheckCircle : null}
             >
-              {isCompleted ? t('completed', 'Completed') : t('markComplete', 'Mark Complete')}
+              {isCompleted ? t('takeQuizAgain', 'Review Quiz') : t('takeQuiz', 'Take Quiz')}
             </Button>
           </div>
         </div>
