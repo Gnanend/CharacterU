@@ -28,6 +28,12 @@ import Mentor from './pages/Mentor';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import ProtectedAdminRoute from './components/auth/ProtectedAdminRoute';
+import EmployerLogin from './pages/EmployerLogin';
+import EmployerRegister from './pages/EmployerRegister';
+import EmployerDashboard from './pages/EmployerDashboard';
+import EmployerCandidateSearch from './pages/EmployerCandidateSearch';
+import EmployerCandidateProfile from './pages/EmployerCandidateProfile';
+import EmployerProtectedRoute from './components/employer/EmployerProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import { Toaster } from 'react-hot-toast';
 import LoadingSpinner from './components/ui/LoadingSpinner';
@@ -52,6 +58,34 @@ function App() {
         <Router>
           <RouteLogger />
           <Routes>
+            {/* Employer Portal Routes */}
+            <Route path="/employer/login" element={<EmployerLogin />} />
+            <Route path="/employer/register" element={<EmployerRegister />} />
+            <Route 
+              path="/employer/dashboard" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerDashboard />
+                </EmployerProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employer/candidates" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerCandidateSearch />
+                </EmployerProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employer/candidates/:certificateId" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerCandidateProfile />
+                </EmployerProtectedRoute>
+              } 
+            />
+
             {/* Public Application Layout wrapper (Landing, Auth, etc.) */}
             <Route path="/" element={<MainLayout />}>
               <Route index element={<Home />} />
