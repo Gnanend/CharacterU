@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/axiosInstance';
-import { LogOut, ShieldCheck, FileBadge, Activity, Key, TrendingUp, Building, Settings, Search, Clock } from 'lucide-react';
+import { LogOut, ShieldCheck, Activity, Key, Building, Settings, Search, Clock, BookOpen, Terminal } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
@@ -96,7 +96,10 @@ export default function EmployerDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <NavCard title="Candidate Search" desc="Verify a specific candidate certificate" icon={<Search className="w-8 h-8 text-indigo-400" />} onClick={() => navigate('/employer/candidates')} />
           <NavCard title="Verification History" desc="Audit log of your candidate verifications" icon={<Activity className="w-8 h-8 text-green-400" />} onClick={() => navigate('/employer/history')} />
-          <NavCard title="Settings & Integration" desc="Manage profile and API keys" icon={<Settings className="w-8 h-8 text-gray-400" />} onClick={() => navigate('/employer/settings')} />
+          <NavCard title="API Keys" desc="Manage API keys for integrations" icon={<Key className="w-8 h-8 text-yellow-400" />} onClick={() => navigate('/employer/api-keys')} />
+          <NavCard title="API Documentation" desc="Integration guides and endpoint details" icon={<BookOpen className="w-8 h-8 text-pink-400" />} onClick={() => navigate('/employer/api-docs')} />
+          <NavCard title="API Tester" desc="Test requests directly in browser" icon={<Terminal className="w-8 h-8 text-blue-400" />} onClick={() => navigate('/employer/api-tester')} />
+          <NavCard title="Settings" desc="Manage profile and company info" icon={<Settings className="w-8 h-8 text-gray-400" />} onClick={() => navigate('/employer/settings')} />
         </div>
 
       </main>

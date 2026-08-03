@@ -24,6 +24,7 @@ const publicRoutes = require('./publicRoutes');
 const adminRoutes = require('./adminRoutes');
 const mentorRoutes = require('./mentorRoutes');
 const employerRoutes = require('./employerRoutes');
+const employerApiRoutes = require('./employerApiRoutes');
 
 // Mount routes
 router.use('/auth', authRoutes);
@@ -37,6 +38,8 @@ router.use('/certificates', certificateRoutes);
 router.use('/public', publicRoutes);
 router.use('/admin', adminRoutes);
 router.use('/mentor', mentorRoutes);
+router.use('/mentor', mentorRoutes);
 router.use('/employer', employerRoutes);
+router.use('/employer/api', employerApiRoutes);
 
 module.exports = router;

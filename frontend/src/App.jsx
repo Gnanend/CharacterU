@@ -36,6 +36,8 @@ import EmployerCandidateProfile from './pages/EmployerCandidateProfile';
 import EmployerHistory from './pages/EmployerHistory';
 import EmployerApiKeys from './pages/EmployerApiKeys';
 import EmployerSettings from './pages/EmployerSettings';
+import EmployerApiDocs from './pages/EmployerApiDocs';
+import EmployerApiTester from './pages/EmployerApiTester';
 import EmployerProtectedRoute from './components/employer/EmployerProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import { Toaster } from 'react-hot-toast';
@@ -101,6 +103,22 @@ function App() {
               element={
                 <EmployerProtectedRoute>
                   <EmployerApiKeys />
+                </EmployerProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employer/api-docs" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerApiDocs />
+                </EmployerProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employer/api-tester" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerApiTester />
                 </EmployerProtectedRoute>
               } 
             />
