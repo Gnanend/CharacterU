@@ -11,7 +11,11 @@ import {
   User, 
   LogOut,
   Sparkles,
-  Settings
+  Settings,
+  Activity,
+  BookOpen,
+  Bot,
+  Users
 } from 'lucide-react';
 
 /**
@@ -19,18 +23,28 @@ import {
  * Renders primary navigation links, active states, and user actions.
  */
 const Sidebar = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { t } = useTranslation('common');
 
   const navItems = [
     { name: t('dashboard', 'Dashboard'), path: '/dashboard', icon: LayoutDashboard },
     { name: t('dailyCheckIn', 'Daily Check-In'), path: '/daily-checkin', icon: CalendarCheck },
+    { name: t('learning', 'Learning Academy'), path: '/learning', icon: BookOpen },
+    { name: t('mentor', 'AI Mentor'), path: '/mentor', icon: Bot },
     { name: t('pledge', 'Pledges'), path: '/pledge', icon: HandHeart },
     { name: t('certificates', 'Certificates'), path: '/certificates', icon: Award },
+    { name: t('achievements', 'Achievements'), path: '/achievements', icon: Award },
     { name: t('leaderboard', 'Leaderboard'), path: '/leaderboard', icon: Trophy },
+    
+    // Admin Routes
+    user?.role === 'admin' ? { name: t('adminDashboard', 'Admin Dashboard'), path: '/admin/dashboard', icon: LayoutDashboard } : null,
+    user?.role === 'admin' ? { name: t('adminUsers', 'User Management'), path: '/admin/users', icon: Users } : null,
+    user?.role === 'admin' ? { name: t('adminAnalytics', 'Admin Analytics'), path: '/admin/analytics', icon: Activity } : null,
+    user?.role === 'admin' ? { name: t('adminCourses', 'Admin Courses'), path: '/admin/courses', icon: BookOpen } : null,
+    
     { name: t('profile', 'Profile'), path: '/profile', icon: User },
     { name: t('editProfile', 'Edit Profile'), path: '/edit-profile', icon: Settings },
-  ];
+  ].filter(Boolean);
 
   return (
     <aside className="w-64 bg-dark-950 border-r border-dark-800 flex flex-col h-full sticky top-0 shrink-0">

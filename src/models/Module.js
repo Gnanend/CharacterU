@@ -19,6 +19,10 @@ const moduleSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  duration: {
+    type: Number,
+    default: 0,
+  },
   isPublished: {
     type: Boolean,
     default: false,

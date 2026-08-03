@@ -10,7 +10,13 @@ const LessonCard = ({ lesson, isCompleted, isLocked }) => {
   return (
     <div 
       className={`p-4 border rounded-xl flex items-center justify-between mb-3 transition-colors ${isCompleted ? 'bg-emerald-900/20 border-emerald-500/30' : isLocked ? 'bg-dark-900/50 border-dark-800 opacity-60' : 'bg-dark-800 border-dark-700 hover:border-primary-500/50 cursor-pointer'}`}
-      onClick={() => !isLocked && navigate(`/learning/lesson/${lesson._id}`)}
+      onClick={() => {
+        if (!isLocked) {
+          console.log("Lesson clicked", lesson);
+          console.log("Navigating to:", `/learning/lesson/${lesson._id}`);
+          navigate(`/learning/lesson/${lesson._id}`);
+        }
+      }}
     >
       <div className="flex items-center gap-4">
         {isCompleted ? (

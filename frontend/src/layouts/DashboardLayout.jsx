@@ -15,6 +15,7 @@ const DashboardLayout = () => {
   // State to manage mobile sidebar visibility
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+  console.log("Layout rendered");
 
   return (
     // Outer container takes full viewport height and prevents scrolling

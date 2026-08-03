@@ -12,6 +12,8 @@ const LessonViewer = () => {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation('learning');
+  console.log("LessonViewer mounted");
+  console.log("lessonId =", lessonId);
   
   const [lesson, setLesson] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +22,7 @@ const LessonViewer = () => {
   useEffect(() => {
     const fetchLesson = async () => {
       try {
+        console.log("Fetching lesson", lessonId);
         const response = await learningService.getLesson(lessonId);
         setLesson(response.data);
         setIsCompleted(response.data.isCompleted || false);
@@ -76,7 +79,7 @@ const LessonViewer = () => {
             </div>
             <div className="flex items-center justify-between text-sm mb-2">
               <span className="text-slate-400">Time</span>
-              <span className="font-bold text-slate-300">{lesson.estimatedMinutes} {t('mins', 'mins')}</span>
+              <span className="font-bold text-slate-300">{lesson.duration || lesson.estimatedMinutes || 0} {t('mins', 'mins')}</span>
             </div>
             <Button 
               variant={isCompleted ? "outline" : "premium"}

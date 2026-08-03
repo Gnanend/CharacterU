@@ -1,0 +1,123 @@
+{
+  "info": {
+    "name": "CharacterU - User Management API",
+    "description": "Enterprise SaaS User Management endpoints for CharacterU admin dashboard.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/admin/users?page=1&limit=10&search=&role=&status=&sort=newest",
+              "host": ["{{api_url}}"],
+              "path": ["admin", "users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "" },
+                { "key": "role", "value": "" },
+                { "key": "status", "value": "" },
+                { "key": "sort", "value": "newest" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/admin/users/{{user_id}}",
+              "host": ["{{api_url}}"],
+              "path": ["admin", "users", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated Name\",\n  \"bio\": \"New biography\",\n  \"role\": \"student\",\n  \"status\": \"active\",\n  \"avatar\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/admin/users/{{user_id}}",
+              "host": ["{{api_url}}"],
+              "path": ["admin", "users", "{{user_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Toggle User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"suspend\"\n}"
+            },
+            "url": {
+              "raw": "{{api_url}}/admin/users/{{user_id}}/status",
+              "host": ["{{api_url}}"],
+              "path": ["admin", "users", "{{user_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Soft Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/admin/users/{{user_id}}",
+              "host": ["{{api_url}}"],
+              "path": ["admin", "users", "{{user_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

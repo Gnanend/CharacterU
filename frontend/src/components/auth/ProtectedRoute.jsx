@@ -11,6 +11,7 @@ import LoadingSpinner from '../LoadingSpinner';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
+  console.log("ProtectedRoute:", location.pathname);
 
   // Show a loading indicator while the AuthContext is hydrating the user session
   if (loading) {

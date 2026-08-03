@@ -64,7 +64,49 @@ const uploadAvatar = multer({
   },
 });
 
+/**
+ * Configure Cloudinary for Course Resources
+ */
+const resourceStorage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'characteru/resources',
+    resource_type: 'raw', // important for docs/pdfs/zips
+  },
+});
+
+const uploadResource = multer({
+  storage: resourceStorage,
+  limits: {
+    fileSize: 25 * 1024 * 1024, // 25 MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = [
+      'application/pdf',
+      'application/msword', // doc
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // docx
+      'application/vnd.ms-powerpoint', // ppt
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation', // pptx
+      'application/vnd.ms-excel', // xls
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // xlsx
+      'application/zip',
+      'application/x-zip-compressed'
+    ];
+    
+    // Check extension as fallback
+    const allowedExtensions = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'zip'];
+    const ext = file.originalname.split('.').pop().toLowerCase();
+    
+    if (allowedMimeTypes.includes(file.mimetype) || allowedExtensions.includes(ext)) {
+      cb(null, true);
+    } else {
+      cb(new ApiError(400, 'Invalid file type. Supported formats: pdf, doc, docx, ppt, pptx, xls, xlsx, zip.'), false);
+    }
+  },
+});
+
 module.exports = {
   uploadVideo,
   uploadAvatar,
+  uploadResource,
 };

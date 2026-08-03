@@ -19,6 +19,7 @@ const Learning = () => {
     const fetchCourses = async () => {
       try {
         const response = await learningService.getCourses();
+        console.log("Courses API Response:", response);
         setCourses(response?.data || []);
       } catch (err) {
         console.error('Failed to fetch courses:', err);
@@ -92,7 +93,12 @@ const Learning = () => {
                   </div>
                 </div>
 
-                <Button variant="premium" className="w-full" icon={PlayCircle} onClick={() => navigate(`/learning/course/${course.slug}`)}>
+                <Button variant="premium" className="w-full" icon={PlayCircle} onClick={() => {
+                  console.log("COURSE OBJECT:", course);
+                  console.log("COURSE SLUG:", course.slug);
+                  console.log("NAVIGATING TO:", `/learning/course/${course.slug}`);
+                  navigate(`/learning/course/${course.slug}`);
+                }}>
                   {t('startLearning', 'Start Learning')}
                 </Button>
               </div>

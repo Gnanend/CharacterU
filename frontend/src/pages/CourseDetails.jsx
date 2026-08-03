@@ -11,6 +11,7 @@ import { showToast } from '../components/ui/Toast';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 const CourseDetails = () => {
+  console.log("CourseDetails mounted");
   const { slug } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation('learning');

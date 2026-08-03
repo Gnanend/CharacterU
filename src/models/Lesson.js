@@ -23,10 +23,25 @@ const lessonSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  pdfUrl: {
+    type: String,
+    default: '',
+  },
+  externalLinks: [{
+    title: String,
+    url: String,
+  }],
+  downloads: [{
+    title: String,
+    fileUrl: String,
+  }],
   image: {
     type: String,
     default: '',
   },
+  lessonType: { type: String, enum: ['Video', 'Reading', 'Assignment', 'Exercise'], default: 'Video' },
+  freePreview: { type: Boolean, default: false },
+  duration: { type: Number, default: 0 },
   estimatedMinutes: {
     type: Number,
     default: 0,

@@ -1,0 +1,84 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "CharacterU - User Management API",
+  "dateExported": "2026-07-31T00:00:00.000Z",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "containerId": "",
+      "sortNum": 10000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+      ],
+      "colId": "col_user_mgmt",
+      "name": "Get All Users",
+      "url": "{{api_url}}/admin/users?page=1&limit=10",
+      "method": "GET",
+      "modified": "2026-07-31T00:00:00.000Z",
+      "created": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "containerId": "",
+      "sortNum": 20000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+      ],
+      "colId": "col_user_mgmt",
+      "name": "Get User Details",
+      "url": "{{api_url}}/admin/users/{{user_id}}",
+      "method": "GET",
+      "modified": "2026-07-31T00:00:00.000Z",
+      "created": "2026-07-31T00:00:00.000Z"
+    },
+    {
+      "containerId": "",
+      "sortNum": 30000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{admin_token}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "colId": "col_user_mgmt",
+      "name": "Update User",
+      "url": "{{api_url}}/admin/users/{{user_id}}",
+      "method": "PUT",
+      "modified": "2026-07-31T00:00:00.000Z",
+      "created": "2026-07-31T00:00:00.000Z",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"fullName\": \"Updated Name\",\n  \"bio\": \"New biography\",\n  \"role\": \"student\",\n  \"status\": \"active\",\n  \"avatar\": \"\"\n}"
+      }
+    },
+    {
+      "containerId": "",
+      "sortNum": 40000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{admin_token}}" },
+        { "name": "Content-Type", "value": "application/json" }
+      ],
+      "colId": "col_user_mgmt",
+      "name": "Toggle User Status",
+      "url": "{{api_url}}/admin/users/{{user_id}}/status",
+      "method": "PATCH",
+      "modified": "2026-07-31T00:00:00.000Z",
+      "created": "2026-07-31T00:00:00.000Z",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"action\": \"suspend\"\n}"
+      }
+    },
+    {
+      "containerId": "",
+      "sortNum": 50000,
+      "headers": [
+        { "name": "Authorization", "value": "Bearer {{admin_token}}" }
+      ],
+      "colId": "col_user_mgmt",
+      "name": "Soft Delete User",
+      "url": "{{api_url}}/admin/users/{{user_id}}",
+      "method": "DELETE",
+      "modified": "2026-07-31T00:00:00.000Z",
+      "created": "2026-07-31T00:00:00.000Z"
+    }
+  ]
+}

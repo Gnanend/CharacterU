@@ -65,6 +65,33 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    bio: {
+      type: String,
+      default: '',
+      trim: true,
+      maxlength: [500, 'Bio cannot exceed 500 characters'],
+    },
+    status: {
+      type: String,
+      enum: {
+        values: ['active', 'suspended'],
+        message: '{VALUE} is not a valid status'
+      },
+      default: 'active'
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    },
+    deletedAt: {
+      type: Date,
+      default: null
+    },
+    deletedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null
+    }
   },
   {
     timestamps: true, // Automatically handles createdAt and updatedAt
@@ -78,6 +105,14 @@ const userSchema = new mongoose.Schema(
 userSchema.index({ characterScore: -1, createdAt: 1 });
 userSchema.index({ country: 1, characterScore: -1, createdAt: 1 });
 userSchema.index({ city: 1, characterScore: -1, createdAt: 1 });
+
+/**
+ * Enterprise User Management Indexes
+ */
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
+userSchema.index({ status: 1 });
+userSchema.index({ isDeleted: 1 });
 
 /**
  * Pre-save middleware that automatically hashes the password using bcryptjs

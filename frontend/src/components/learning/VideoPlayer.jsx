@@ -1,4 +1,5 @@
 import React from 'react';
+import { getYoutubeEmbedUrl } from '../../utils/youtube';
 
 const VideoPlayer = ({ videoUrl }) => {
   if (!videoUrl) {
@@ -14,13 +15,19 @@ const VideoPlayer = ({ videoUrl }) => {
     <div className="w-full aspect-video bg-black rounded-xl overflow-hidden border border-dark-800 relative shadow-2xl">
       {/* Assuming YouTube embed or raw mp4 for simplicity */}
       {videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
-        <iframe
-          src={videoUrl.replace('watch?v=', 'embed/')}
-          className="w-full h-full"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
+        getYoutubeEmbedUrl(videoUrl) ? (
+          <iframe
+            src={getYoutubeEmbedUrl(videoUrl)}
+            className="w-full h-full"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-red-400">
+            Invalid YouTube URL
+          </div>
+        )
       ) : (
         <video 
           controls 

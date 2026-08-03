@@ -7,8 +7,11 @@ const certificateService = {
   generate: async () => {
     return await axiosInstance.post('/certificates/generate');
   },
-  verify: async (token) => {
-    return await axiosInstance.get(`/certificates/verify/${token}`);
+  verify: async (certificateId) => {
+    return await axiosInstance.get(`/public/verify/${certificateId}`);
+  },
+  getAdminAnalytics: async () => {
+    return await axiosInstance.get(`/admin/analytics/verification`);
   }
 };
 

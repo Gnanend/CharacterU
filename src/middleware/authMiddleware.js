@@ -56,18 +56,13 @@ exports.protect = asyncHandler(async (req, res, next) => {
  * 
  * @param {...string} roles - The roles allowed to access the route.
  */
-exports.authorize = (...roles) => {
+exports.authorizeRoles = (...roles) => {
   return (req, res, next) => {
-    // Safety check in case it's used without protect middleware
-    if (!req.user || !req.user.role) {
-      return next(new ApiError(403, 'Forbidden access'));
-    }
-
-    // Check if the user's role is in the list of allowed roles
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new ApiError(403, `User role '${req.user.role}' is not authorized to access this route`)
-      );
+    if (!req.user || !req.user.role || !roles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied'
+      });
     }
     next();
   };

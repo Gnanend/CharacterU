@@ -6,25 +6,44 @@ const questionSchema = new mongoose.Schema({
     ref: 'Quiz',
     required: true
   },
-  questionKey: {
+  question: {
     type: String,
+    trim: true,
     required: true
   },
+  type: {
+    type: String,
+    enum: ['multiple_choice', 'true_false', 'multiple_select'],
+    default: 'multiple_choice'
+  },
+  questionKey: {
+    type: String,
+  },
+  options: [{
+    type: String
+  }],
   optionKeys: [{
     type: String,
-    required: true
   }],
   correctAnswer: {
-    type: Number, // Index of the correct option in optionKeys
-    required: true
+    type: Number, // Index of the correct option for single choice
+  },
+  correctAnswers: [{
+    type: Number // Indices for multiple select
+  }],
+  explanation: {
+    type: String
   },
   explanationKey: {
     type: String,
-    required: true
   },
   points: {
     type: Number,
     default: 1
+  },
+  order: {
+    type: Number,
+    default: 0
   }
 }, { timestamps: true });
 

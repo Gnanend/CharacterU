@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const User = require('../models/User');
 const Certificate = require('../models/Certificate');
 const Pledge = require('../models/Pledge');
-const CheckIn = require('../models/CheckIn');
+const CheckIn = require('../models/DailyCheckIn');
 const blockchainService = require('./blockchainService');
 const ApiError = require('../utils/ApiError');
 
@@ -17,7 +17,7 @@ exports.checkEligibilityAndStatus = async (userId) => {
   if (!user) throw new ApiError(404, 'User not found');
 
   const checkIns = await CheckIn.countDocuments({ user: userId });
-  const pledges = await Pledge.countDocuments({ user: userId, status: 'completed' });
+  const pledges = await Pledge.countDocuments({ user: userId, status: 'approved' });
   const existingCert = await Certificate.findOne({ user: userId });
 
   let profileFields = ['fullName', 'email', 'avatar', 'city', 'country'];
@@ -51,14 +51,19 @@ exports.issueNewCertificate = async (userId) => {
   const verificationToken = uuidv4();
   const issueDate = new Date();
 
+  const displayName = user.fullName || user.username || 'Student';
+
   // 1. SHA-256 Hash
-  const dataString = `${certificateId}|${user.fullName}|${user.characterScore}|${issueDate.toISOString()}`;
+  const dataString = `${certificateId}|${displayName}|${user.characterScore}|${issueDate.toISOString()}`;
   const certificateHash = crypto.createHash('sha256').update(dataString).digest('hex');
 
   // 2. Blockchain Transaction
   let txDetails;
   try {
     txDetails = await blockchainService.issueBlockchainCertificate(certificateId, userId.toString(), certificateHash);
+    if (!txDetails.transactionHash || txDetails.transactionHash.length < 60) {
+      throw new Error('Invalid Transaction Hash returned from blockchain service');
+    }
   } catch (error) {
     throw new ApiError(500, 'Blockchain registration failed.');
   }
@@ -68,13 +73,41 @@ exports.issueNewCertificate = async (userId) => {
   const qrCodeDataUrl = await QRCode.toDataURL(verifyUrl);
 
   // 4. PDF Generation
-  const pdfBuffer = await generatePDFBuffer(user.fullName, certificateId, user.characterScore, issueDate, qrCodeDataUrl, txDetails.transactionHash);
+  const pdfBuffer = await generatePDFBuffer(displayName, certificateId, user.characterScore, issueDate, qrCodeDataUrl, txDetails.transactionHash);
   
+  // LOGGING: Local PDF Info
+  const fs = require('fs');
+  const path = require('path');
+  const localPdfPath = path.join(__dirname, `../../${certificateId}.pdf`);
+  fs.writeFileSync(localPdfPath, pdfBuffer);
+  console.log('--- PDF AUDIT LOG ---');
+  console.log('Local PDF path:', localPdfPath);
+  console.log('File exists:', fs.existsSync(localPdfPath));
+  console.log('File size:', fs.statSync(localPdfPath).size, 'bytes');
+  console.log('MIME type: application/pdf');
+
   const pdfUrl = await new Promise((resolve, reject) => {
-    let stream = cloudinary.uploader.upload_stream({ folder: 'characteru/certificates', resource_type: 'raw', format: 'pdf' }, (error, result) => {
-      if (result) resolve(result.secure_url);
-      else reject(new ApiError(500, 'PDF upload failed'));
-    });
+    let stream = cloudinary.uploader.upload_stream(
+      { 
+        folder: 'characteru/certificates', 
+        resource_type: 'raw', // Changed back to raw for actual PDF file delivery
+        format: 'pdf',
+        access_mode: 'public',
+        type: 'upload'
+      }, 
+      (error, result) => {
+        if (error) {
+          console.error('Cloudinary upload error:', error);
+          return reject(new ApiError(500, 'PDF upload failed'));
+        }
+        console.log('Cloudinary upload response:', result);
+        
+        // Return the actual .pdf URL.
+        // IMPORTANT: Cloudinary blocks direct PDF delivery by default for security.
+        // You MUST enable "Allow delivery of PDF and ZIP files" in your Cloudinary Security Settings.
+        resolve(result.secure_url);
+      }
+    );
     streamifier.createReadStream(pdfBuffer).pipe(stream);
   });
 
@@ -118,8 +151,9 @@ async function generatePDFBuffer(name, certId, score, date, qrDataUrl, txHash) {
 
     const detailsY = doc.y;
     doc.fontSize(12).fillColor('#666666');
+    const formattedDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     doc.text(`Certificate ID: ${certId}`, 50, detailsY);
-    doc.text(`Issued Date: ${date.toLocaleDateString()}`, 50, detailsY + 20);
+    doc.text(`Issued Date: ${formattedDate}`, 50, detailsY + 20);
     doc.text(`Blockchain: Polygon Amoy`, 50, detailsY + 40);
     doc.text(`Tx Hash: ${txHash.substring(0,20)}...`, 50, detailsY + 60);
 

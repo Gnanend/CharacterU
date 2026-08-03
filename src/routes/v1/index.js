@@ -20,6 +20,9 @@ const leaderboardRoutes = require('./leaderboardRoutes');
 const profileRoutes = require('./profileRoutes');
 const learningRoutes = require('./learningRoutes');
 const certificateRoutes = require('./certificateRoutes');
+const publicRoutes = require('./publicRoutes');
+const adminRoutes = require('./adminRoutes');
+const mentorRoutes = require('./mentorRoutes');
 
 // Mount routes
 router.use('/auth', authRoutes);
@@ -30,5 +33,8 @@ router.use('/leaderboard', leaderboardRoutes);
 router.use('/profile', profileRoutes);
 router.use('/learning', learningRoutes);
 router.use('/certificates', certificateRoutes);
+router.use('/public', publicRoutes);
+router.use('/admin', adminRoutes);
+router.use('/mentor', mentorRoutes);
 
 module.exports = router;

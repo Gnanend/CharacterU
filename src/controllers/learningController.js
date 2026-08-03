@@ -4,7 +4,7 @@ const learningService = require('../services/learningService');
 class LearningController {
   async getCourses(req, res, next) {
     try {
-      const courses = await learningService.getPublishedCourses();
+      const courses = await learningService.getPublishedCourses(req.query);
       res.status(200).json({
         status: 'success',
         data: courses
@@ -31,13 +31,16 @@ class LearningController {
   async getLesson(req, res, next) {
     try {
       const { lessonId } = req.params;
+      console.log("Incoming lessonId", lessonId);
       const userId = req.user._id;
       const lesson = await learningService.getLesson(lessonId, userId);
+      console.log("Lesson found", lesson._id);
       res.status(200).json({
         status: 'success',
         data: lesson
       });
     } catch (error) {
+      console.error("GET LESSON ERROR:", error);
       next(error);
     }
   }

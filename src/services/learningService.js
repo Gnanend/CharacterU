@@ -9,8 +9,26 @@ const Question = require('../models/Question');
 const QuizAttempt = require('../models/QuizAttempt');
 
 class LearningService {
-  async getPublishedCourses() {
-    return await Course.find({ isPublished: true }).sort({ order: 1 });
+  async getPublishedCourses(filters = {}) {
+    const query = { isPublished: true };
+    const { search, category, difficulty, instructor } = filters;
+    
+    if (search && search.trim() !== '') {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { titleKey: { $regex: search, $options: 'i' } },
+        { category: { $regex: search, $options: 'i' } },
+        { tags: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    if (category && category !== 'all' && category !== '') query.category = category;
+    if (difficulty && difficulty !== 'all' && difficulty !== '') query.difficulty = difficulty;
+    if (instructor && instructor !== 'all' && instructor !== '') query.instructor = instructor;
+    
+    return await Course.find(query)
+      .populate('instructor', 'fullName avatar')
+      .sort({ order: 1, createdAt: -1 });
   }
 
   async getCourseBySlug(slug, userId) {

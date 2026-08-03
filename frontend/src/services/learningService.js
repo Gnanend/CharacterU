@@ -19,6 +19,7 @@ class LearningService {
    * Fetch a specific lesson by ID
    */
   async getLesson(lessonId) {
+    console.log("GET /learning/lesson/" + lessonId);
     return await axiosInstance.get(`/learning/lesson/${lessonId}`);
   }
 

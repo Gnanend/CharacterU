@@ -5,7 +5,7 @@ import { CheckCircle, XCircle, ExternalLink, Loader2 } from 'lucide-react';
 import Container from '../components/Container';
 
 export default function VerifyCertificate() {
-  const { token } = useParams();
+  const { certificateId } = useParams();
   const [cert, setCert] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,8 +13,8 @@ export default function VerifyCertificate() {
   useEffect(() => {
     const verify = async () => {
       try {
-        const res = await certificateService.verify(token);
-        setCert(res.certificate);
+        const res = await certificateService.verify(certificateId);
+        setCert(res.data);
       } catch (err) {
         setError("Certificate Invalid or Not Found");
       } finally {
@@ -22,7 +22,7 @@ export default function VerifyCertificate() {
       }
     };
     verify();
-  }, [token]);
+  }, [certificateId]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-dark-950"><Loader2 className="animate-spin w-12 h-12 text-primary-500"/></div>;
 
@@ -40,27 +40,34 @@ export default function VerifyCertificate() {
             <div className="space-y-8">
               <div className="text-center space-y-2">
                 <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
-                <h1 className="text-3xl font-bold text-white">Certificate Valid</h1>
-                <p className="text-green-400 font-medium tracking-widest uppercase">Blockchain Verified</p>
+                <h1 className="text-3xl font-bold text-white">{cert.isValid ? 'Certificate Valid' : 'Certificate Invalid'}</h1>
+                <p className={`font-medium tracking-widest uppercase ${cert.isValid ? 'text-green-400' : 'text-red-400'}`}>
+                  {cert.blockchainStatus}
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-dark-950 p-6 rounded-xl border border-dark-800">
-                <Detail label="User Name" value={cert.user?.fullName} />
+                <Detail label="User Name" value={cert.fullName} />
                 <Detail label="Character Score" value={cert.characterScore} />
                 <Detail label="Certificate ID" value={cert.certificateId} />
-                <Detail label="Issue Date" value={new Date(cert.issuedDate).toLocaleDateString()} />
-                <Detail label="Blockchain Network" value={cert.blockchainNetwork} />
-                <Detail label="Block Number" value={cert.blockNumber} />
+                <Detail label="Issue Date" value={new Date(cert.issueDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} />
+                <Detail label="Contract Address" value={cert.contractAddress} />
                 <div className="col-span-1 md:col-span-2">
                   <Detail label="Transaction Hash" value={cert.transactionHash} />
                 </div>
               </div>
 
               <div className="flex flex-col md:flex-row justify-center items-center gap-6">
-                <img src={cert.qrCodeUrl} alt="QR Code" className="w-32 h-32 rounded-lg bg-white p-2" />
-                <a href={`https://amoy.polygonscan.com/tx/${cert.transactionHash}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#8247E5] hover:bg-[#7237d5] text-white px-6 py-3 rounded-xl font-bold transition-colors">
-                  <ExternalLink className="w-5 h-5"/> View on Polygon Explorer
-                </a>
+                {cert.pdfUrl && (
+                  <a href={cert.pdfUrl} download target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-bold transition-colors">
+                    <ExternalLink className="w-5 h-5"/> Download PDF
+                  </a>
+                )}
+                {cert.transactionHash && (
+                  <a href={`https://amoy.polygonscan.com/tx/${cert.transactionHash}`} target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-[#8247E5] hover:bg-[#7237d5] text-white px-6 py-3 rounded-xl font-bold transition-colors">
+                    <ExternalLink className="w-5 h-5"/> View on Polygon Explorer
+                  </a>
+                )}
               </div>
             </div>
           )}
