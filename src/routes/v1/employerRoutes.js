@@ -10,7 +10,12 @@ router.post('/logout', employerController.logout);
 router.get('/profile', protectEmployer, employerController.getProfile);
 router.put('/profile', protectEmployer, employerController.updateProfile);
 
-module.exports = router;
-
 router.get('/search', protectEmployer, employerController.searchCandidates);
 router.get('/candidate/:certificateId', protectEmployer, employerController.getCandidate);
+
+router.get('/analytics', protectEmployer, employerController.getAnalytics);
+router.get('/history', protectEmployer, employerController.getHistory);
+router.post('/api-keys', protectEmployer, employerController.createApiKey);
+router.delete('/api-keys/:keyId', protectEmployer, employerController.revokeApiKey);
+
+module.exports = router;

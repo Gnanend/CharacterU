@@ -1,6 +1,8 @@
 const Employer = require('../models/Employer');
 const Certificate = require('../models/Certificate');
 const User = require('../models/User');
+const EmployerVerificationLog = require('../models/EmployerVerificationLog');
+const crypto = require('crypto');
 const ApiError = require('../utils/ApiError');
 const asyncHandler = require('../utils/asyncHandler');
 const jwt = require('jsonwebtoken');
@@ -108,8 +110,34 @@ exports.getCandidate = asyncHandler(async (req, res) => {
   const cert = await Certificate.findOne({ certificateId }).populate('user', 'fullName email characterScore avatar');
   if (!cert) throw new ApiError(404, 'Certificate not found');
 
-  // Hardcode 100% completion for now, or calculate if data exists
+  // Log verification
+  await EmployerVerificationLog.create({
+    employer: req.employer._id,
+    certificate: cert._id,
+    candidateName: cert.user?.fullName || 'Unknown',
+    ipAddress: req.ip,
+    userAgent: req.headers['user-agent'],
+    verificationResult: 'Valid',
+    blockchainVerified: !!cert.transactionHash
+  });
+
   res.status(200).json({ success: true, certificate: cert });
+});
+
+exports.updateProfile = asyncHandler(async (req, res) => {
+  const { companyName, website, phone, industry, companySize, country } = req.body;
+  
+  const employer = req.employer;
+  if (companyName) employer.companyName = companyName;
+  if (website !== undefined) employer.website = website;
+  if (phone !== undefined) employer.phone = phone;
+  if (industry !== undefined) employer.industry = industry;
+  if (companySize !== undefined) employer.companySize = companySize;
+  if (country !== undefined) employer.country = country;
+
+  await employer.save();
+
+  res.status(200).json({ success: true, employer: employer.toObject() });
 });
 
 exports.searchCandidates = asyncHandler(async (req, res) => {
@@ -133,4 +161,60 @@ exports.searchCandidates = asyncHandler(async (req, res) => {
   }).populate('user', 'fullName email characterScore avatar').sort({ issuedDate: -1 });
 
   res.status(200).json({ success: true, results: certificates });
+});
+
+exports.getAnalytics = asyncHandler(async (req, res) => {
+  const employerId = req.employer._id;
+  const totalLogs = await EmployerVerificationLog.countDocuments({ employer: employerId });
+  const validLogs = await EmployerVerificationLog.countDocuments({ employer: employerId, verificationResult: 'Valid' });
+  const recentLogs = await EmployerVerificationLog.find({ employer: employerId }).sort({ createdAt: -1 }).limit(1);
+  const lastVerification = recentLogs.length ? recentLogs[0].createdAt : null;
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const trend = await EmployerVerificationLog.countDocuments({ employer: employerId, createdAt: { $gte: sevenDaysAgo } });
+
+  res.status(200).json({
+    success: true,
+    data: {
+      totalSearches: totalLogs,
+      totalVerified: validLogs,
+      activeApiKeys: req.employer.apiKeys.length,
+      lastVerification,
+      trend7Days: trend,
+    }
+  });
+});
+
+exports.getHistory = asyncHandler(async (req, res) => {
+  const history = await EmployerVerificationLog.find({ employer: req.employer._id })
+    .populate('certificate', 'certificateId issuedDate')
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    data: history
+  });
+});
+
+exports.createApiKey = asyncHandler(async (req, res) => {
+  const { name } = req.body;
+  const rawKey = crypto.randomBytes(32).toString('hex');
+  const hashedKey = crypto.createHash('sha256').update(rawKey).digest('hex');
+
+  req.employer.apiKeys.push({ name, key: hashedKey });
+  await req.employer.save();
+
+  res.status(201).json({
+    success: true,
+    apiKey: rawKey,
+    message: 'Store this key securely. It will not be shown again.'
+  });
+});
+
+exports.revokeApiKey = asyncHandler(async (req, res) => {
+  const { keyId } = req.params;
+  req.employer.apiKeys = req.employer.apiKeys.filter(k => k._id.toString() !== keyId);
+  await req.employer.save();
+  res.status(200).json({ success: true, message: 'API key revoked' });
 });

@@ -33,6 +33,9 @@ import EmployerRegister from './pages/EmployerRegister';
 import EmployerDashboard from './pages/EmployerDashboard';
 import EmployerCandidateSearch from './pages/EmployerCandidateSearch';
 import EmployerCandidateProfile from './pages/EmployerCandidateProfile';
+import EmployerHistory from './pages/EmployerHistory';
+import EmployerApiKeys from './pages/EmployerApiKeys';
+import EmployerSettings from './pages/EmployerSettings';
 import EmployerProtectedRoute from './components/employer/EmployerProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import { Toaster } from 'react-hot-toast';
@@ -82,6 +85,30 @@ function App() {
               element={
                 <EmployerProtectedRoute>
                   <EmployerCandidateProfile />
+                </EmployerProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employer/history" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerHistory />
+                </EmployerProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employer/api-keys" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerApiKeys />
+                </EmployerProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/employer/settings" 
+              element={
+                <EmployerProtectedRoute>
+                  <EmployerSettings />
                 </EmployerProtectedRoute>
               } 
             />
